@@ -1,14 +1,14 @@
+/* eslint-disable react/prop-types */
 import Answer from "./Answer"
 
-
-const Question = () => {
+const Question = ({ question }) => {
     return (
         <>
-            <div className="mt-4 text-2xl ">
-                What is JS?
+            <div className="mt-10 text-2xl ">
+                {question?.question}
             </div>
 
-            <Answer />
+            <Answer options={question?.options} />
         </>
     )
 }
