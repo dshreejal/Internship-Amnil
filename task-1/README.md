@@ -31,7 +31,9 @@ Change directory to the project directory
 cd Internship-Amnil/task-1
 ```
 
-- Change directory to the server to start the server
+- Setup Express Server
+
+  Change directory to the server to start the server
 
   ```bash
   cd server
@@ -49,7 +51,9 @@ cd Internship-Amnil/task-1
   npm run dev
   ```
 
-- Change directory to the client to start the react application
+- Setup React Application
+
+  Change directory to client to start the react application
 
   ```bash
   cd client
