@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { seedData } = require("../controllers/quiz.controller");
+const { seedData, getQuiz } = require("../controllers/quiz.controller");
 
 
-router.route("/").post(seedData);
+router.route("/")
+    .post(seedData)
+    .get(getQuiz)
 
 module.exports = router;
