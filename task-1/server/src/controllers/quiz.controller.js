@@ -7,7 +7,6 @@ const QuizModel = require('../models/quiz.model');
 exports.seedData = async (req, res) => {
     try {
         const quizData = await QuizModel.find();
-        console.log(quizData);
         if (quizData.length > 0) {
             return sendResponse(res, HttpStatus.OK, true, [], "Data already seeded", null);
         }
