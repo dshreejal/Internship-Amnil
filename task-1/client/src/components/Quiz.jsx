@@ -5,7 +5,7 @@ import Question from "./Question"
 
 const Quiz = () => {
     const fetchQuestions = async () => {
-        const response = await fetch(`${"http://localhost:8000/api"}/quiz`)
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/quiz`)
         const data = await response.json()
         setQuestions(data?.data)
 
