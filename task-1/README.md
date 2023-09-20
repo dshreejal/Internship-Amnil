@@ -17,6 +17,14 @@ Note: Css Styles is optional Furthermore, the incorporation of any additional te
 ![Screen Shot 3](./assets/images/quiz-3.png)
 ![Screen Shot 4](./assets/images/quiz-4.png)
 
+## Project Structure
+
+The project consists of a Server created using Express and client UI created using React.
+
+- [client](https://github.com/dshreejal/Internship-Amnil/tree/main/task-1/client)
+
+- [server](https://github.com/dshreejal/Internship-Amnil/tree/main/task-1/server)
+
 ## Project Setup
 
 Fork the repository and clone it (or download the zip file and extract it)
