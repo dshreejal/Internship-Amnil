@@ -1,1 +1,16 @@
-Github Repo Created during internship at Amnil Technologies.
+# Github Repo Created during internship at Amnil Technologies.
+
+### Table of Contents
+
+- [Description](#description)
+- [Tasks](#tasks)
+
+### Description
+
+This repository is created to organize and present the solution to the tasks assigned to me during my internship.
+
+### Tasks
+
+Here's a list of the tasks included in this repository:
+
+- [task-1](https://github.com/dshreejal/Internship-Amnil/tree/main/task-1)
