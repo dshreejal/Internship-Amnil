@@ -9,3 +9,8 @@ Write a function to reverse a given string without using the built-in `reverse()
 Write a function to calculate the factorial of a given positive integer.
 
 - [factorial_program]('./2.factorial.js')
+
+**3. Palindrome Checker**
+Create a function that checks if a given string is a palindrome (reads the same backward as forward).
+
+- [palindrome_program]('./3.palindrome.js)
