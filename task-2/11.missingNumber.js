@@ -5,6 +5,15 @@ function missingNumber(array) {
         console.log('Please enter an array');
         return;
     }
+
+    //Checking if the array contains all numbers or not
+    for (let i = 0; i < array.length; i++) {
+        if (typeof array[i] !== 'number') {
+            console.log('Please enter an array of numbers');
+            return;
+        }
+    }
+
     let sum = 0;
     let n = array.length;
     let expectedSum = (n * (n + 1)) / 2;

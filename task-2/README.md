@@ -30,27 +30,27 @@ Write a function that calculates the sum of all elements in an array.
 
 - [array_sum_program]('./6.arraySum.js)
 
-**7. Title Case a Sentence**
+**7. Title Case a Sentence:**
 Create a function that converts a sentence to title case (capitalize the first letter of each word).
 
 - [tittleCase_program]('./7.titleCase.js)
 
-**8. Count Vowels in a String**
+**8. Count Vowels in a String:**
 Write a function that counts the number of vowels in a given string.
 
 - [countVowels_program]('./8.countVowels.js)
 
-**9. Fibonacci Sequence**
+**9. Fibonacci Sequence:**
 Implement a function that generates the Fibonacci sequence up to a specified number of terms.
 
 - [fibonacci_program]('./9.fibonacci.js)
 
-**10. Anagram Checker**
+**10. Anagram Checker:**
 Write a function that checks if two strings are anagrams of each other (contain the same letters, ignoring spaces and capitalization).
 
 - [anagram_checker_program]('./10.anagramChecker.js)
 
-**11. Missing Number**
+**11. Missing Number:**
 Given an array containing n distinct numbers taken from 0 to n, find the missing number.
 
 - [missing_number_program]('./11.missingNumber.js)
