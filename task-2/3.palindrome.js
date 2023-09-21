@@ -15,11 +15,12 @@ function isPalindrome(str) {
 }
 const data = 'bob'; //madam
 const result = isPalindrome(data);
-
-if (result) {
-    console.log(`"${data}" is a palindrome.`);
-}
-else {
-    console.log(`"${data}" is not a palindrome.`);
+if (result !== undefined) {
+    if (result) {
+        console.log(`"${data}" is a palindrome.`);
+    }
+    else {
+        console.log(`"${data}" is not a palindrome.`);
+    }
 }
 
