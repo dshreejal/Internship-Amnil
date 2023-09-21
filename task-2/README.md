@@ -83,4 +83,9 @@ Write a function that reverses the order of words in a sentence.
 **17. Validate Email Address:**
 Implement a function that validates if a given string is a valid email address.
 
-- [validate_email]('./17.validateEmail.js)
+- [validate_email_program]('./17.validateEmail.js)
+
+**18. Find the Intersection of Two Arrays:**
+Write a function that finds the intersection (common elements) of two arrays.
+
+- [array_intersect_program]('./18.arrayIntersect.js)
