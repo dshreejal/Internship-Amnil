@@ -29,3 +29,13 @@ Write a program that prints numbers from 1 to 100. For multiples of 3, print "Fi
 Write a function that calculates the sum of all elements in an array.
 
 - [array_sum_program]('./6.arraySum.js)
+
+**7. Title Case a Sentence**
+Create a function that converts a sentence to title case (capitalize the first letter of each word).
+
+- [tittleCase_program]('./7.titleCase.js)
+
+**8. Count Vowels in a String**
+Write a function that counts the number of vowels in a given string.
+
+- [countVowels_program]('./8.countVowels.js)
