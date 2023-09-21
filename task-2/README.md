@@ -75,7 +75,12 @@ Create a function that finds and returns the second-largest number in an array o
 
 - [second_largest_number_program]('./15.secondLargest.js)
 
-**16. Reverse Words in a String**
+**16. Reverse Words in a String:**
 Write a function that reverses the order of words in a sentence.
 
 - [reverse_words_program]('./16.reverseWords.js)
+
+**17. Validate Email Address:**
+Implement a function that validates if a given string is a valid email address.
+
+- [validate_email]('./17.validateEmail.js)
