@@ -55,7 +55,12 @@ Given an array containing n distinct numbers taken from 0 to n, find the missing
 
 - [missing_number_program]('./11.missingNumber.js)
 
-**12. Remove Duplicates from an Array**
+**12. Remove Duplicates from an Array:**
 Write a function that removes duplicate elements from an array.
 
 - [remove_duplicate_program]('./12.removeDuplicate.js)
+
+**13. Calculate the Power:**
+Implement a function that calculates x^n (x raised to the power of n) without using the `Math.pow()` method.
+
+- [calculate_power_program]('./calculatePower.js)
