@@ -2,7 +2,7 @@
 
 function factorial(n) {
     if (typeof n !== 'number') {
-        console.log('Please enter a number');
+        console.log('Please enter a valid number');
         return;
     }
     if (n < 0) {
@@ -15,4 +15,6 @@ function factorial(n) {
 }
 const data = 5;
 const result = factorial(data);
-console.log(`The factorial of ${data} is ${result}`);
+if (result !== undefined) {
+    console.log(`The factorial of ${data} is ${result}`);
+}
