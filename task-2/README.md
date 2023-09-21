@@ -49,3 +49,8 @@ Implement a function that generates the Fibonacci sequence up to a specified num
 Write a function that checks if two strings are anagrams of each other (contain the same letters, ignoring spaces and capitalization).
 
 - [anagram_checker_program]('./10.anagramChecker.js)
+
+**11. Missing Number**
+Given an array containing n distinct numbers taken from 0 to n, find the missing number.
+
+- [missing_number_program]('./11.missingNumber.js)
