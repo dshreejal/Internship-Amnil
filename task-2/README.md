@@ -65,7 +65,12 @@ Implement a function that calculates x^n (x raised to the power of n) without us
 
 - [calculate_power_program]('./13.calculatePower.js)
 
-**14. Merge Sorted Arrays**
+**14. Merge Sorted Arrays:**
 Write a function that merges two sorted arrays into a single sorted array.
 
 - [merge_sorted_array_program]('./14.mergeSorted.js)
+
+**15. Find the Second Largest Number:**
+Create a function that finds and returns the second-largest number in an array of numbers.
+
+- [second_largest_number_program]('./15.secondLargest.js)
