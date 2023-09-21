@@ -74,3 +74,8 @@ Write a function that merges two sorted arrays into a single sorted array.
 Create a function that finds and returns the second-largest number in an array of numbers.
 
 - [second_largest_number_program]('./15.secondLargest.js)
+
+**16. Reverse Words in a String**
+Write a function that reverses the order of words in a sentence.
+
+- [reverse_words_program]('./16.reverseWords.js)
