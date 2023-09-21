@@ -54,3 +54,8 @@ Write a function that checks if two strings are anagrams of each other (contain 
 Given an array containing n distinct numbers taken from 0 to n, find the missing number.
 
 - [missing_number_program]('./11.missingNumber.js)
+
+**12. Remove Duplicates from an Array**
+Write a function that removes duplicate elements from an array.
+
+- [remove_duplicate_program]('./12.removeDuplicate.js)
