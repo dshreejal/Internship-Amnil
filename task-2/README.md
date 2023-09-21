@@ -90,6 +90,7 @@ Write a function that finds the intersection (common elements) of two arrays.
 
 - [array_intersect_program](./18.arrayIntersect.js)
 
-**19. Check for Balanced Brackets:**Implement a function that checks if a string with brackets (e.g., "{[()]}" or "[(){}]") is balanced.
+**19. Check for Balanced Brackets:**
+Implement a function that checks if a string with brackets (e.g., "{[()]}" or "[(){}]") is balanced.
 
 - [balanced_paranthesis_program](./19.balancedParanthesis.js)
