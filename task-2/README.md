@@ -39,3 +39,8 @@ Create a function that converts a sentence to title case (capitalize the first l
 Write a function that counts the number of vowels in a given string.
 
 - [countVowels_program]('./8.countVowels.js)
+
+**9. Fibonacci Sequence**
+Implement a function that generates the Fibonacci sequence up to a specified number of terms.
+
+- [fibonacci_program]('./9.fibonacci.js)
