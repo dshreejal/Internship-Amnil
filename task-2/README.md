@@ -44,3 +44,8 @@ Write a function that counts the number of vowels in a given string.
 Implement a function that generates the Fibonacci sequence up to a specified number of terms.
 
 - [fibonacci_program]('./9.fibonacci.js)
+
+**10. Anagram Checker**
+Write a function that checks if two strings are anagrams of each other (contain the same letters, ignoring spaces and capitalization).
+
+- [anagram_checker_program]('./10.anagramChecker.js)
