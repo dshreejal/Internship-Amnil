@@ -63,4 +63,9 @@ Write a function that removes duplicate elements from an array.
 **13. Calculate the Power:**
 Implement a function that calculates x^n (x raised to the power of n) without using the `Math.pow()` method.
 
-- [calculate_power_program]('./calculatePower.js)
+- [calculate_power_program]('./13.calculatePower.js)
+
+**14. Merge Sorted Arrays**
+Write a function that merges two sorted arrays into a single sorted array.
+
+- [merge_sorted_array_program]('./14.mergeSorted.js)
