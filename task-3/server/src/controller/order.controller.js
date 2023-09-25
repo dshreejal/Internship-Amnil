@@ -33,12 +33,18 @@ exports.addToCart = (req, res) => {
 
         const presentIndex = cart.indexOf(cartAlreadyPresent);
 
-        //checking if the item is already present in the cart
-        cartAlreadyPresent.items = [...cartAlreadyPresent.items, ...newCart.items].filter((item, index, self) =>
-            index === self.findIndex((t) => (
-                t.id === item.id
-            ))
-        );
+        // Loop through items in the newCart and update quantity or add new items
+        newCart.items.forEach((item) => {
+            const existingItemIndex = cartAlreadyPresent.items.findIndex((t) => t.id === item.id);
+
+            if (existingItemIndex !== -1) {
+                // Item already exists, update its quantity
+                cartAlreadyPresent.items[existingItemIndex].quantity += item.quantity;
+            } else {
+                // Item doesn't exist, add it to the cart
+                cartAlreadyPresent.items.push(item);
+            }
+        });
 
         //calculating the total price of the products in the cart
         cartAlreadyPresent.total_price = (cartAlreadyPresent.items.reduce((acc, item) => {
