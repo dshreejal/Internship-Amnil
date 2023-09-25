@@ -16,6 +16,11 @@ exports.getOneProduct = (req, res) => {
     res.status(200).send(product);
 }
 
+exports.getOutOfStock = (req, res) => {
+    const outOfStockProducts = products.filter(product => product.quantity < 5);
+    res.status(200).send(outOfStockProducts);
+}
+
 exports.createProduct = (req, res) => {
     const newProduct = req.body;
 
@@ -58,6 +63,24 @@ exports.updateProduct = (req, res) => {
             return res.status(500).send('Internal server error');
         }
         res.status(200).send(updateProduct);
+    })
+}
+
+exports.updateProductQuantity = (req, res) => {
+    const product = products.find(product => product.id === parseInt(req.params.id));
+    if (!product) {
+        return res.status(404).send('Product not found');
+    }
+
+    const index = products.indexOf(product);
+    products[index].quantity = req.body.quantity || product.quantity;
+
+    fs.writeFile(pathToProducts, JSON.stringify(products, null, 2), 'utf8', (err) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Internal server error');
+        }
+        res.status(200).send(products[index]);
     })
 }
 

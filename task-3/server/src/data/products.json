@@ -76,7 +76,7 @@
     "name": "Sneakers",
     "price": 59.99,
     "description": "Sporty sneakers for everyday wear.",
-    "quantity": 4,
+    "quantity": 1,
     "product_type": "Clothing"
   }
 ]
