@@ -1,5 +1,15 @@
 const express = require("express");
-const { getProducts, getOneProduct, createProduct, updateProduct, deleteProduct, getOutOfStock, updateProductQuantity } = require("../controller/product.controller");
+const
+    {
+        getProducts,
+        getOneProduct,
+        createProduct,
+        updateProduct,
+        deleteProduct,
+        getOutOfStock,
+        updateProductQuantity,
+    } = require("../controller/product.controller");
+
 const router = express.Router();
 
 router.route('/')

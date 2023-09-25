@@ -5,7 +5,30 @@ const path = require("path");
 const pathToProducts = path.join(__dirname, "../data/products.json");
 
 exports.getProducts = (req, res) => {
-    res.status(200).send(products);
+    const { name, description, sort, filter } = req.query;
+    let filteredProducts = products;
+
+    if (name) {
+        filteredProducts = filteredProducts.filter(product => product.name.toLowerCase().includes(name.toLowerCase()));
+    }
+
+    if (description) {
+        filteredProducts = filteredProducts.filter(product => product.description.toLowerCase().includes(description.toLowerCase()));
+    }
+
+    if (sort) {
+        if (sort === 'price') {
+            filteredProducts = filteredProducts.sort((a, b) => a.price - b.price);
+        } else if (sort === '-price') {
+            filteredProducts = filteredProducts.sort((a, b) => b.price - a.price);
+        }
+    }
+
+    if (filter) {
+        filteredProducts = filteredProducts.filter(product => product.product_type.toLowerCase().includes(filter.toLowerCase()));
+    }
+
+    res.status(200).send(filteredProducts);
 }
 
 exports.getOneProduct = (req, res) => {
