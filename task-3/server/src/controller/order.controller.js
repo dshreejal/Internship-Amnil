@@ -27,10 +27,6 @@ exports.addToCart = (req, res) => {
 
     //if cart already present, update the cart else create a new cart
     if (cartAlreadyPresent) {
-        if (cartAlreadyPresent.is_ordered) {
-            return res.status(400).send('Cart already ordered');
-        }
-
         const presentIndex = cart.indexOf(cartAlreadyPresent);
 
         // Loop through items in the newCart and update quantity or add new items
@@ -105,14 +101,16 @@ exports.checkout = (req, res) => {
     }
 
     const index = cart.indexOf(userCart);
-    cart[index].is_ordered = true;
+    cart.splice(index, 1);
 
     const newOrder = {
         id: orders.length + 1,
         user_id: userId,
         cart_id: cartId,
         items: userCart.items,
-        total_price: userCart.total_price
+        total_price: userCart.total_price,
+        order_status: "pending",
+        order_date: new Date().toISOString().slice(0, 10)
     }
 
     orders.push(newOrder);

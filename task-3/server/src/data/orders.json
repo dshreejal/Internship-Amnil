@@ -37,6 +37,8 @@
         "product_type": "Clothing"
       }
     ],
-    "total_price": "37244.12"
+    "total_price": "37244.12",
+    "order_status": "pending",
+    "order_date": "2023-09-26"
   }
 ]
