@@ -1,88 +1,64 @@
-const users = require("../data/users.json");
-const fs = require("fs");
-const path = require("path");
+const User = require("../models/User.model");
 
-const pathToUsers = path.join(__dirname, "../data/users.json");
 
-exports.getUsers = (req, res) => {
+exports.getUsers = async (req, res) => {
     const name = req.query.name;
     if (name) {
-        const filteredUsers = users.filter(user => user.name.toLowerCase().includes(name.toLowerCase()));
+        const filteredUsers = await User.find({ name: { $regex: name, $options: 'i' } });
         return res.status(200).send(filteredUsers);
     }
+    const users = await User.find();
     res.status(200).send(users);
 }
 
-exports.getOneUser = (req, res) => {
-    const user = users.find(user => user.id === parseInt(req.params.id));
+exports.getOneUser = async (req, res) => {
+    const user = await User.findById(req.params.id);
     if (!user) {
         return res.status(404).send('User not found');
     }
     res.status(200).send(user);
 }
 
-exports.addUser = (req, res) => {
-
+exports.addUser = async (req, res) => {
     const user = {
-        id: req.body.id,
         name: req.body.name,
         address: req.body.address
     }
 
-    const userAlreadyPresent = users.find(user => user.name === req.body.name);
+    const userAlreadyPresent = await User.findOne({ name: req.body.name });
     if (userAlreadyPresent) {
         return res.status(400).send('User already present');
     }
 
-    users.push(user);
-    fs.writeFile(pathToUsers, JSON.stringify(users, null, 2), 'utf8', (err) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).send('Server error');
-        }
-        res.status(201).send(user);
-    })
+    const newUser = await User.create(user);
+    res.status(201).send(newUser);
 }
 
-exports.updateUser = (req, res) => {
-    const user = users.find(user => user.id === parseInt(req.params.id));
+exports.updateUser = async (req, res) => {
+    console.log("hello");
+    const user = await User.findById(req.params.id);
+
     if (!user) {
         return res.status(404).send('User not found');
     }
 
     const updateUser = {
-        id: user.id,
         name: req.body.name || user.name,
         address: req.body.address || user.address
     }
-    const index = users.indexOf(user);
-    users[index] = updateUser;
 
-    fs.writeFile(pathToUsers, JSON.stringify(users, null, 2), 'utf8', (err) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).send('Server error');
-        }
-        res.status(200).send(updateUser);
-    })
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, updateUser, { new: true });
+
+    res.status(200).send(updatedUser);
 }
 
-exports.deleteUser = (req, res) => {
-    const user = users.find(user => user.id === parseInt(req.params.id));
+exports.deleteUser = async (req, res) => {
+    const user = await User.findById(req.params.id);
     if (!user) {
         return res.status(404).send('User not found');
     }
 
-    const index = users.indexOf(user);
-    users.splice(index, 1);
-
-    fs.writeFile(pathToUsers, JSON.stringify(users, null, 2), 'utf8', (err) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).send('Server error');
-        }
-        res.status(200).send('user deleted');
-    })
-
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).send('user deleted');
 }
 
