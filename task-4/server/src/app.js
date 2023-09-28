@@ -2,6 +2,10 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
+
+const connectToMongo = require("./config/db");
+connectToMongo();
+
 app.use(express.json());
 
 const userRouter = require("./routes/user.route");
