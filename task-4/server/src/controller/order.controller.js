@@ -45,6 +45,17 @@ exports.addToCart = async (req, res) => {
         const newProducts = newCart.products;
 
         for (const newProduct of newProducts) {
+            // Check if the product exists in the Product model
+            const productDetails = await Product.findById(newProduct.product);
+            if (!productDetails) {
+                return res.status(404).send('Product not found');
+            }
+
+            // Check if the product quantity is greater than 0
+            if (productDetails.quantity <= 0) {
+                return res.status(400).send('Product quantity is not available');
+            }
+
             const existingProductIndex = products.findIndex(product => product.product.equals(newProduct.product));
 
             if (existingProductIndex !== -1) {
@@ -61,6 +72,15 @@ exports.addToCart = async (req, res) => {
             } else {
                 // Product is not in the cart
                 const productDetails = await Product.findById(newProduct.product);
+                if (!productDetails) {
+                    return res.status(404).send('Product not found');
+                }
+
+                // Check if the product quantity is greater than 0
+                if (productDetails.quantity <= 0) {
+                    return res.status(400).send('Product quantity is not available');
+                }
+
                 if (productDetails) {
                     // Calculate the price for the new product based on the product model
                     const newPrice = newProduct.quantity * productDetails.price;
@@ -85,6 +105,16 @@ exports.addToCart = async (req, res) => {
 
         for (const product of products) {
             const productDetails = await Product.findById(product.product);
+
+            if (!productDetails) {
+                return res.status(404).send('Product not found');
+            }
+
+            // Check if the product quantity is greater than 0
+            if (productDetails.quantity <= 0) {
+                return res.status(400).send('Product quantity is not available');
+            }
+
             const newProduct = {
                 product: productDetails._id,
                 quantity: product.quantity,
@@ -120,9 +150,20 @@ exports.checkout = async (req, res) => {
         return res.status(400).send('Minimum threshold for total price of an order is 1000');
     }
 
-    //delete the cart
-    await Cart.findOneAndDelete({ user_id: userId, _id: cartId });
-
+    //update the product quantity
+    for (const product of userCart.products) {
+        const productDetails = await Product.findById(product.product);
+        if (productDetails) {
+            productDetails.quantity -= product.quantity;
+            if (productDetails.quantity < 0) {
+                return res.status(400).send('Product quantity is not available');
+            }
+            await Product.findByIdAndUpdate(product.product, { quantity: productDetails.quantity });
+        }
+        else {
+            return res.status(404).send('Product not found');
+        }
+    }
 
     const order = await Order.create({
         user: userId,
@@ -130,10 +171,12 @@ exports.checkout = async (req, res) => {
         total_price: userCart.total_price
     });
 
+    //delete the cart
+    await Cart.findOneAndDelete({ user_id: userId, _id: cartId });
 
+    //add order Id to user document
     await User.findByIdAndUpdate(userId, { $push: { orders: order._id } });
 
     res.send(order);
-
 }
 
