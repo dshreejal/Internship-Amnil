@@ -3,11 +3,15 @@ const User = require("../models/User.model");
 
 exports.getUsers = async (req, res) => {
     const name = req.query.name;
+    const filterOptions = {};
+
     if (name) {
-        const filteredUsers = await User.find({ name: { $regex: name, $options: 'i' } });
-        return res.status(200).send(filteredUsers);
+        filterOptions.name = { $regex: name, $options: "i" };
     }
-    const users = await User.find();
+    const users = await User.find(filterOptions).populate({
+        path: 'orders',
+        select: ' total_price',
+    });
     res.status(200).send(users);
 }
 
