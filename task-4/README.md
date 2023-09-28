@@ -1,6 +1,6 @@
 # Task 4
 
-Use Database connection to perfrom the CRUD operations as of [task-3](https://github.com/dshreejal/Internship-Amnil/tree/main/task-3)
+Use MongoDB Database connection to perform the CRUD operations of [task-3](https://github.com/dshreejal/Internship-Amnil/tree/main/task-3)
 
 Create a basic node express application and perform following operations:
 
@@ -30,7 +30,7 @@ Orders:
 
 The project consists of a backend server created using Express
 
-- [server](https://github.com/dshreejal/Internship-Amnil/tree/main/task-3/server)
+- [server](https://github.com/dshreejal/Internship-Amnil/tree/main/task-4/server)
 
 ## Project Setup
 
@@ -56,6 +56,13 @@ Install the required dependencies
 
 ```bash
 npm install
+```
+
+Add the necessary environment variables from .env.example file
+
+```bash
+PORT = 8000
+MongoURL = 'mongodb://localhost:27017/'
 ```
 
 Run the server
