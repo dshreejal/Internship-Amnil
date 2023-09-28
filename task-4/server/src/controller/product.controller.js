@@ -1,75 +1,70 @@
-const products = require("../data/products.json")
-const fs = require("fs");
-const path = require("path");
 
-const pathToProducts = path.join(__dirname, "../data/products.json");
+const Product = require("../models/Product.model");
 
-exports.getProducts = (req, res) => {
+exports.getProducts = async (req, res) => {
     const { name, description, sort, filter } = req.query;
-    let filteredProducts = products;
 
+    let filterObject = {};
     if (name) {
-        filteredProducts = filteredProducts.filter(product => product.name.toLowerCase().includes(name.toLowerCase()));
+        filterObject.name = { $regex: name, $options: "i" };
     }
-
     if (description) {
-        filteredProducts = filteredProducts.filter(product => product.description.toLowerCase().includes(description.toLowerCase()));
+        filterObject.description = { $regex: description, $options: "i" };
+    }
+    if (filter) {
+        filterObject.product_type = { $regex: filter, $options: "i" }
     }
 
+
+    let sortObject = {};
     if (sort) {
-        if (sort === 'price') {
-            filteredProducts = filteredProducts.sort((a, b) => a.price - b.price);
-        } else if (sort === '-price') {
-            filteredProducts = filteredProducts.sort((a, b) => b.price - a.price);
+        if (sort === "price") {
+            sortObject.price = 1;
+        }
+        else if (sort === "-price") {
+            sortObject.price = -1;
         }
     }
 
-    if (filter) {
-        filteredProducts = filteredProducts.filter(product => product.product_type.toLowerCase().includes(filter.toLowerCase()));
-    }
 
-    res.status(200).send(filteredProducts);
+    const products = await Product.find(filterObject).sort(sortObject);
+
+    res.status(200).send(products);
 }
 
-exports.getOneProduct = (req, res) => {
-    const product = products.find(product => product.id === parseInt(req.params.id));
+exports.getOneProduct = async (req, res) => {
+    const product = await Product.findById(req.params.id);
     if (!product) {
         return res.status(404).send('Product not found');
     }
     res.status(200).send(product);
 }
 
-exports.getOutOfStock = (req, res) => {
-    const outOfStockProducts = products.filter(product => product.quantity < 5);
+exports.getOutOfStock = async (req, res) => {
+    const outOfStockProducts = await Product.find({ quantity: { $lt: 5 } });
     res.status(200).send(outOfStockProducts);
 }
 
-exports.createProduct = (req, res) => {
+exports.createProduct = async (req, res) => {
     const newProduct = req.body;
 
-    const productAlreadyPresent = products.find(product => product.name === req.body.name);
+    const productAlreadyPresent = await Product.findOne({ name: req.body.name });
     if (productAlreadyPresent) {
         return res.status(400).send('Product already present');
     }
 
-    products.push(newProduct);
-    fs.writeFile(pathToProducts, JSON.stringify(products, null, 2), 'utf8', (err) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).send('Internal server error');
-        }
-        res.status(201).send(newProduct);
-    })
+    const product = await Product.create(newProduct);
+    res.status(201).send(product);
+
 }
 
-exports.updateProduct = (req, res) => {
-    const product = products.find(product => product.id === parseInt(req.params.id));
+exports.updateProduct = async (req, res) => {
+    const product = Product.findById(req.params.id);
     if (!product) {
         return res.status(404).send('Product not found');
     }
 
     const updateProduct = {
-        id: product.id,
         name: req.body.name || product.name,
         price: req.body.price || product.price,
         description: req.body.description || product.description,
@@ -77,50 +72,37 @@ exports.updateProduct = (req, res) => {
         product_type: req.body.product_type || product.product_type
     }
 
-    const index = products.indexOf(product);
-    products[index] = updateProduct;
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updateProduct, { new: true })
 
-    fs.writeFile(pathToProducts, JSON.stringify(products, null, 2), 'utf8', (err) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).send('Internal server error');
-        }
-        res.status(200).send(updateProduct);
-    })
+
+    res.status(200).send(updatedProduct);
+
 }
 
-exports.updateProductQuantity = (req, res) => {
-    const product = products.find(product => product.id === parseInt(req.params.id));
+exports.updateProductQuantity = async (req, res) => {
+    const product = await Product.findById(req.params.id);
     if (!product) {
         return res.status(404).send('Product not found');
     }
 
-    const index = products.indexOf(product);
-    products[index].quantity = req.body.quantity || product.quantity;
+    const updateProduct = {
+        quantity: req.body.quantity || product.quantity
+    }
 
-    fs.writeFile(pathToProducts, JSON.stringify(products, null, 2), 'utf8', (err) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).send('Internal server error');
-        }
-        res.status(200).send(products[index]);
-    })
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updateProduct, { new: true })
+
+
+    res.status(200).send(updatedProduct);
+
 }
 
-exports.deleteProduct = (req, res) => {
-    const product = products.find(product => product.id === parseInt(req.params.id));
+exports.deleteProduct = async (req, res) => {
+    const product = await Product.findById(req.params.id);
     if (!product) {
         return res.status(404).send('Product not found');
     }
 
-    const index = products.indexOf(product);
-    products.splice(index, 1);
+    await Product.findByIdAndDelete(req.params.id);
+    res.status(200).send("product deleted successfully");
 
-    fs.writeFile(pathToProducts, JSON.stringify(products, null, 2), 'utf8', (err) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).send('Internal server error');
-        }
-        res.status(200).send("product deleted successfully");
-    })
 }
