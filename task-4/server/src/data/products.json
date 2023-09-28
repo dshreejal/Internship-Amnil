@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "Smartphone",
+    "price": 599.99,
+    "description": "A high-quality smartphone with advanced features.",
+    "quantity": 50,
+    "product_type": "Electronics"
+  },
+  {
+    "id": 2,
+    "name": "Laptop",
+    "price": 999.99,
+    "description": "A powerful laptop for work and entertainment.",
+    "quantity": 30,
+    "product_type": "Electronics"
+  },
+  {
+    "id": 3,
+    "name": "Apples",
+    "price": 0.99,
+    "description": "Fresh and juicy apples.",
+    "quantity": 10,
+    "product_type": "Grocery"
+  },
+  {
+    "id": 4,
+    "name": "Jeans",
+    "price": 49.99,
+    "description": "Comfortable and stylish jeans.",
+    "quantity": 20,
+    "product_type": "Clothing"
+  },
+  {
+    "id": 5,
+    "name": "LED TV",
+    "price": 799.99,
+    "description": "A high-definition LED television.",
+    "quantity": 45,
+    "product_type": "Electronics"
+  },
+  {
+    "id": 6,
+    "name": "Milk",
+    "price": 2.49,
+    "description": "Fresh milk from the farm.",
+    "quantity": 8,
+    "product_type": "Grocery"
+  },
+  {
+    "id": 7,
+    "name": "T-shirt",
+    "price": 14.99,
+    "description": "Comfortable cotton T-shirt.",
+    "quantity": 15,
+    "product_type": "Clothing"
+  },
+  {
+    "id": 8,
+    "name": "Headphones",
+    "price": 89.99,
+    "description": "High-quality over-ear headphones.",
+    "quantity": 40,
+    "product_type": "Electronics"
+  },
+  {
+    "id": 9,
+    "name": "Rice",
+    "price": 3.99,
+    "description": "Long-grain white rice.",
+    "quantity": 12,
+    "product_type": "Grocery"
+  },
+  {
+    "id": 10,
+    "name": "Sneakers",
+    "price": 59.99,
+    "description": "Sporty sneakers for everyday wear.",
+    "quantity": 1,
+    "product_type": "Clothing"
+  }
+]
