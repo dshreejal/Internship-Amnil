@@ -8,13 +8,10 @@ connectToMongo();
 
 app.use(express.json());
 
-const userRouter = require("./routes/user.route");
-const produtRouter = require("./routes/product.route");
-const orderRouter = require("./routes/order.route");
+const routes = require("./routes");
 
-app.use("/api/users", userRouter);
-app.use("/api/products", produtRouter);
-app.use("/api/orders", orderRouter);
+app.use("/", routes);
+
 
 
 module.exports = app;
