@@ -8,7 +8,7 @@ const
         deleteProduct,
         getOutOfStock,
         updateProductQuantity,
-    } = require("../controller/product.controller");
+    } = require("../modules/Product/product.controller");
 
 const router = express.Router();
 

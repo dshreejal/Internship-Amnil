@@ -1,9 +1,9 @@
 
 
-const Order = require("../models/Order.model");
-const Cart = require("../models/Cart.model");
-const User = require("../models/User.model");
-const Product = require("../models/Product.model");
+const Order = require("../../models/Order.model");
+const Cart = require("../../models/Cart.model");
+const User = require("../../models/User.model");
+const Product = require("../../models/Product.model");
 
 
 exports.getOrders = async (req, res) => {
