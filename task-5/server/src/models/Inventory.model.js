@@ -8,7 +8,9 @@ const inventorySchema = new mongoose.Schema({
         w: Number,
         uom: String
     },
-    status: String
+    status: String,
+    tags: [String],
+    dim_cm: [Number]
 });
 
 const Inventory = mongoose.model('inventory', inventorySchema);
