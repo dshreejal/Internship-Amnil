@@ -7,7 +7,7 @@ const Product = require("../../models/Product.model");
 
 
 exports.getOrders = async (req, res) => {
-    const orders = await Order.find({}).populate("user").populate("products.product");
+    const orders = await Order.find({}).populate("user").populate("products.product").select(["-__v", "-updatedAt"]);
     res.status(200).send(orders);
 }
 
@@ -180,3 +180,37 @@ exports.checkout = async (req, res) => {
     res.send(order);
 }
 
+exports.aggregatedOrder = async (req, res) => {
+
+    // const aggregateQuery = [
+    //     {
+    //         $group: {
+    //             _id: "$user",
+    //             totalOrders: { $sum: 1 }
+    //         }
+    //     }
+    // ];
+
+
+    const aggregateQuery = [
+        {
+            $group: {
+                _id: {
+                    month: { $month: "$createdAt" },
+                    day: { $dayOfMonth: "$createdAt" },
+                    year: { $year: "$createdAt" }
+                },
+                totalOrders: { $sum: 1 },
+                totalPrice: { $sum: "$total_price" }
+            }
+        }
+    ];
+
+    const aggregateOrder = await Order.aggregate(aggregateQuery);
+
+    if (aggregateOrder) {
+        return res.status(200).json({ order: aggregateOrder, message: 'All orders fetched successfully!' });
+    } else {
+        return res.status(400).json({ message: 'Error fetching orders' });
+    }
+}

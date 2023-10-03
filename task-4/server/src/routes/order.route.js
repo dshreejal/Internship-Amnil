@@ -1,5 +1,5 @@
 const express = require("express");
-const { addToCart, getOrders, getOneOrder, viewCart, checkout } = require("../modules/Order/order.controller");
+const { addToCart, getOrders, getOneOrder, viewCart, checkout, aggregatedOrder } = require("../modules/Order/order.controller");
 
 const router = express.Router();
 
@@ -16,5 +16,7 @@ router.route('/view-cart/:id').get(viewCart)
 
 router.route('/checkout/:userId/:cartId')
     .post(checkout);
+
+router.route('/statistics/published').get(aggregatedOrder)
 
 module.exports = router;
