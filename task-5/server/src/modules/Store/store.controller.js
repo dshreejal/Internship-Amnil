@@ -71,11 +71,35 @@ exports.getNearbyStores = async (req, res) => {
                     coordinates: [longitude, latitude]
                 },
                 distanceField: 'distance',
+                includeLocs: "dist.location",
                 maxDistance: distance,
                 spherical: true
             }
+        },
+        {
+            $lookup: {
+                from: 'products',
+                localField: 'products',
+                foreignField: '_id',
+                as: 'products'
+            }
+        },
+        {
+            $project: {
+                name: 1,
+                type: 1,
+                location: 1,
+                products: {
+                    name: 1,
+                    price: 1
+                },
+                user: 1,
+                distance: 1
+            }
         }
-    ])
+
+    ]);
+
 
     res.status(200).send(stores);
 }
