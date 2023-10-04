@@ -24,9 +24,12 @@ exports.getOneUser = async (req, res) => {
 }
 
 exports.addUser = async (req, res) => {
+    const file = req.file.filename;
+
     const user = {
         name: req.body.name,
-        address: req.body.address
+        address: req.body.address,
+        image: file
     }
 
     const userAlreadyPresent = await User.findOne({ name: req.body.name });
