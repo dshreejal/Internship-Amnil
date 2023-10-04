@@ -21,7 +21,6 @@ exports.createStore = async (req, res) => {
             type: 'Point',
             coordinates: [parseFloat(req.body.longitude), parseFloat(req.body.latitude)]
         },
-        products: req.body.products,
         user: req.body.userId,
         image: file
     }
@@ -127,17 +126,6 @@ exports.updateStore = async (req, res) => {
     }
 
 
-    const reqProducts = req.body.products;
-    const storeProducts = store.products;
-
-    const newProducts = [];
-
-
-    reqProducts.forEach((reqProduct) => {
-        if (!storeProducts.includes(reqProduct)) {
-            newProducts.push(reqProduct);
-        }
-    });
 
     let file;
     if (req.file) {
@@ -151,7 +139,6 @@ exports.updateStore = async (req, res) => {
             type: 'Point',
             coordinates: [parseFloat(req.body.longitude), parseFloat(req.body.latitude)]
         },
-        products: [...storeProducts, ...newProducts],
         image: file || store.image
     }, { new: true });
 
