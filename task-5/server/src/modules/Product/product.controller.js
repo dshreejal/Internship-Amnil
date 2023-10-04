@@ -46,7 +46,16 @@ exports.getOutOfStock = async (req, res) => {
 }
 
 exports.createProduct = async (req, res) => {
-    const newProduct = req.body;
+    const file = req.file.filename;
+
+    const newProduct = {
+        name: req.body.name,
+        price: parseFloat(req.body.price),
+        description: req.body.description,
+        quantity: parseInt(req.body.quantity),
+        product_type: req.body.product_type,
+        image: file
+    }
 
     const productAlreadyPresent = await Product.findOne({ name: req.body.name });
     if (productAlreadyPresent) {

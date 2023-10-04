@@ -12,9 +12,11 @@ const
 
 const router = express.Router();
 
+const imageUpload = require("../helpers/imageUpload");
+
 router.route('/')
     .get(getProducts)
-    .post(createProduct)
+    .post(imageUpload.single('image'), createProduct)
 
 router.route('/out-of-stock')
     .get(getOutOfStock)
