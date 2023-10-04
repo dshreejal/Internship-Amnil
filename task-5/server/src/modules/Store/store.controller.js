@@ -63,6 +63,9 @@ exports.getNearbyStores = async (req, res) => {
         distance = req.body.distance;
     }
 
+    const name = req.query.name || '';
+
+
     const stores = await Store.aggregate([
         {
             $geoNear: {
@@ -74,6 +77,11 @@ exports.getNearbyStores = async (req, res) => {
                 includeLocs: "dist.location",
                 maxDistance: distance,
                 spherical: true
+            }
+        },
+        {
+            $match: {
+                name: { $regex: name, $options: "i" }
             }
         },
         {
