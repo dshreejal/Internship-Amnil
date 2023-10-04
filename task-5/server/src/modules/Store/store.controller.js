@@ -1,4 +1,5 @@
 const Store = require('../../models/Store.model');
+const { getImageUrl } = require("../../helpers/getImageUrl");
 
 exports.createStore = async (req, res) => {
     const file = req.file.filename;
@@ -31,6 +32,7 @@ exports.createStore = async (req, res) => {
     }
 
     const store = await Store.create(newStore);
+    store.image = getImageUrl(req, store.image);
 
     res.status(201).send(store);
 
@@ -47,6 +49,10 @@ exports.getStores = async (req, res) => {
     const stores = await Store.find(filterOptions).populate({
         path: 'products',
         select: 'name price'
+    });
+
+    stores.forEach((store) => {
+        store.image = getImageUrl(req, store.image);
     });
 
     res.status(200).send(stores);
@@ -101,12 +107,16 @@ exports.getNearbyStores = async (req, res) => {
                     price: 1
                 },
                 user: 1,
-                distance: 1
+                distance: 1,
+                image: 1
             }
         }
 
     ]);
 
+    stores.forEach((store) => {
+        store.image = getImageUrl(req, store.image);
+    });
 
     res.status(200).send(stores);
 }
@@ -141,6 +151,8 @@ exports.updateStore = async (req, res) => {
         },
         image: file || store.image
     }, { new: true });
+
+    updatedStore.image = getImageUrl(req, updatedStore.image);
 
     res.status(200).send(updatedStore);
 }

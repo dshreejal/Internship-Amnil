@@ -1,4 +1,5 @@
 const User = require("../../models/User.model");
+const { getImageUrl } = require("../../helpers/getImageUrl");
 
 
 exports.getUsers = async (req, res) => {
@@ -12,6 +13,9 @@ exports.getUsers = async (req, res) => {
         path: 'orders',
         select: ' total_price',
     });
+    users.forEach((user) => {
+        user.image = getImageUrl(req, user.image);
+    });
     res.status(200).send(users);
 }
 
@@ -20,6 +24,7 @@ exports.getOneUser = async (req, res) => {
     if (!user) {
         return res.status(404).send('User not found');
     }
+    user.image = getImageUrl(req, user.image);
     res.status(200).send(user);
 }
 
@@ -38,6 +43,7 @@ exports.addUser = async (req, res) => {
     }
 
     const newUser = await User.create(user);
+    newUser.image = getImageUrl(req, newUser.image);
     res.status(201).send(newUser);
 }
 
@@ -49,12 +55,20 @@ exports.updateUser = async (req, res) => {
         return res.status(404).send('User not found');
     }
 
-    const updateUser = {
-        name: req.body.name || user.name,
-        address: req.body.address || user.address
+    let file;
+    if (req.file) {
+        file = req.file.filename;
     }
 
+    const updateUser = {
+        name: req.body.name || user.name,
+        address: req.body.address || user.address,
+        image: file || user.image
+    }
+
+
     const updatedUser = await User.findByIdAndUpdate(req.params.id, updateUser, { new: true });
+    updatedUser.image = getImageUrl(req, updatedUser.image);
 
     res.status(200).send(updatedUser);
 }

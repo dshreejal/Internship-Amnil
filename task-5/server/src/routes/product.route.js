@@ -23,7 +23,7 @@ router.route('/out-of-stock')
 
 router.route('/:id')
     .get(getOneProduct)
-    .put(updateProduct)
+    .put(imageUpload.single('image'), updateProduct)
     .delete(deleteProduct)
 
 router.route('/update-quantity/:id')

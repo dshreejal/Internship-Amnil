@@ -1,6 +1,7 @@
 
 const Product = require("../../models/Product.model");
 const Store = require("../../models/Store.model");
+const { getImageUrl } = require("../../helpers/getImageUrl");
 
 exports.getProducts = async (req, res) => {
     const { name, description, sort, filter } = req.query;
@@ -32,6 +33,10 @@ exports.getProducts = async (req, res) => {
         select: "name location"
     });
 
+    products.forEach((product) => {
+        product.image = getImageUrl(req, product.image);
+    });
+
     res.status(200).send(products);
 }
 
@@ -40,11 +45,15 @@ exports.getOneProduct = async (req, res) => {
     if (!product) {
         return res.status(404).send('Product not found');
     }
+    product.image = getImageUrl(req, product.image);
     res.status(200).send(product);
 }
 
 exports.getOutOfStock = async (req, res) => {
     const outOfStockProducts = await Product.find({ quantity: { $lt: 5 } });
+    outOfStockProducts.forEach((product) => {
+        product.image = getImageUrl(req, product.image);
+    });
     res.status(200).send(outOfStockProducts);
 }
 
@@ -72,6 +81,7 @@ exports.createProduct = async (req, res) => {
     }
 
     const product = await Product.create(newProduct);
+    product.image = getImageUrl(req, product.image);
 
     await Store.findByIdAndUpdate(req.body.storeId, { $push: { products: product._id } });
 
@@ -101,7 +111,7 @@ exports.updateProduct = async (req, res) => {
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updateProduct, { new: true })
-
+    updatedProduct.image = getImageUrl(req, updatedProduct.image);
 
     res.status(200).send(updatedProduct);
 
@@ -118,7 +128,7 @@ exports.updateProductQuantity = async (req, res) => {
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updateProduct, { new: true })
-
+    updatedProduct.image = getImageUrl(req, updatedProduct.image);
 
     res.status(200).send(updatedProduct);
 

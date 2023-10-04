@@ -12,7 +12,7 @@ router.route('/')
 
 router.route('/:id')
     .get(getOneUser)
-    .put(updateUser)
+    .put(imageUpload.single('image'), updateUser)
     .delete(deleteUser)
 
 module.exports = router;
