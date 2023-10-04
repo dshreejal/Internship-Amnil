@@ -31,7 +31,7 @@ const storeSchema = new mongoose.Schema({
         ref: 'user'
     },
 
-    logo: {
+    image: {
         type: String,
         required: true
     }
