@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     image: {
         type: String,
         required: true
-    }
+    },
+    store: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'store'
+    },
 }, { timestamps: true });
 module.exports = mongoose.model('product', userSchema);
