@@ -1,5 +1,6 @@
 
 const Product = require("../../models/Product.model");
+const Store = require("../../models/Store.model");
 
 exports.getProducts = async (req, res) => {
     const { name, description, sort, filter } = req.query;
@@ -26,8 +27,10 @@ exports.getProducts = async (req, res) => {
         }
     }
 
-
-    const products = await Product.find(filterObject).sort(sortObject);
+    const products = await Product.find(filterObject).sort(sortObject).populate({
+        path: "store",
+        select: "name location"
+    });
 
     res.status(200).send(products);
 }
@@ -49,6 +52,7 @@ exports.createProduct = async (req, res) => {
     const file = req.file.filename;
 
     const newProduct = {
+        store: req.body.storeId,
         name: req.body.name,
         price: parseFloat(req.body.price),
         description: req.body.description,
@@ -57,12 +61,20 @@ exports.createProduct = async (req, res) => {
         image: file
     }
 
+    const store = await Store.findById(req.body.storeId);
+    if (!store) {
+        return res.status(404).send('Store not found');
+    }
+
     const productAlreadyPresent = await Product.findOne({ name: req.body.name });
     if (productAlreadyPresent) {
         return res.status(400).send('Product already present');
     }
 
     const product = await Product.create(newProduct);
+
+    await Store.findByIdAndUpdate(req.body.storeId, { $push: { products: product._id } });
+
     res.status(201).send(product);
 
 }
@@ -73,12 +85,19 @@ exports.updateProduct = async (req, res) => {
         return res.status(404).send('Product not found');
     }
 
+    let file;
+    if (req.file) {
+        file = req.file.filename;
+    }
+
     const updateProduct = {
+        store: product.store,
         name: req.body.name || product.name,
         price: req.body.price || product.price,
         description: req.body.description || product.description,
         quantity: req.body.quantity || product.quantity,
-        product_type: req.body.product_type || product.product_type
+        product_type: req.body.product_type || product.product_type,
+        image: file || product.image
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updateProduct, { new: true })
@@ -112,6 +131,10 @@ exports.deleteProduct = async (req, res) => {
     }
 
     await Product.findByIdAndDelete(req.params.id);
+
+    //also delete product id from store
+    await Store.findByIdAndUpdate(product.store, { $pull: { products: product_id } });
+
     res.status(200).send("product deleted successfully");
 
 }
