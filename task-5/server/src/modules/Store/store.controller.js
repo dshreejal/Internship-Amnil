@@ -1,4 +1,5 @@
 const Store = require('../../models/Store.model');
+const Product = require('../../models/Product.model');
 const { getImageUrl } = require("../../helpers/getImageUrl");
 
 exports.createStore = async (req, res) => {
@@ -155,4 +156,21 @@ exports.updateStore = async (req, res) => {
     updatedStore.image = getImageUrl(req, updatedStore.image);
 
     res.status(200).send(updatedStore);
+}
+
+exports.deleteStore = async (req, res) => {
+    const storeId = req.params.storeId;
+    const store = await Store.findById(storeId);
+    if (!store) {
+        return res.status(404).send('Store not found');
+    }
+
+    const productExists = await Product.findOne({ store: storeId });
+
+    if (productExists) {
+        return res.status(400).send('Cannot delete store with products');
+    }
+
+    await Store.findByIdAndDelete(storeId);
+    return res.status(200).send('Store deleted');
 }
