@@ -142,8 +142,7 @@ exports.deleteProduct = async (req, res) => {
 
     await Product.findByIdAndDelete(req.params.id);
 
-    //also delete product id from store
-    await Store.findByIdAndUpdate(product.store, { $pull: { products: product_id } });
+    await Store.findByIdAndUpdate(product.store, { $pull: { products: product._id } });
 
     res.status(200).send("product deleted successfully");
 
