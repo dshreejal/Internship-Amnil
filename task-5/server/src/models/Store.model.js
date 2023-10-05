@@ -13,7 +13,7 @@ const storeSchema = new mongoose.Schema({
     location: {
         type: {
             type: String,
-            defaukt: 'Point',
+            default: 'Point',
         },
         coordinates: {
             type: [Number],
