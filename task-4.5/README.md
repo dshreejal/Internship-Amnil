@@ -19,7 +19,7 @@ git clone git@github.com:dshreejal/Internship-Amnil.git
 Change directory to the project directory
 
 ```bash
-cd Internship-Amnil/task-5
+cd Internship-Amnil/task-4.5
 ```
 
 Change directory to the server
