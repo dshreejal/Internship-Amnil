@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User.model');
 
-const JwtAuthenticationMiddleware = (req, res, next) => {
-    console.log("hello");
+const JwtAuthenticationMiddleware = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
-
 
     if (!authHeader) {
         return res.status(401).send('Access denied. No token provided');
@@ -17,8 +16,18 @@ const JwtAuthenticationMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decoded);
-        req.userId = decoded._id;
+
+        if (!decoded.user) {
+            return res.status(401).send('Access denied. No token provided');
+        }
+
+        const validateUser = await User.findById(decoded.user._id);
+
+        if (!validateUser) {
+            return res.status(401).send('Access denied.');
+        }
+
+        req.user = decoded.user;
         next();
     } catch (error) {
         res.status(401).send('Invalid token');
