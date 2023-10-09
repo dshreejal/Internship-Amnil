@@ -15,8 +15,9 @@ router.route('/login')
 router.route('/')
     .post(imageUpload.single('image'), addUser)
 
-// router.use(JwtAuthenticationMiddleware)
-router.use(BasicAuthenticationMiddleware)
+//authentication middleware
+router.use(JwtAuthenticationMiddleware)
+// router.use(BasicAuthenticationMiddleware)
 
 //Protected Routes
 router.route('/')
