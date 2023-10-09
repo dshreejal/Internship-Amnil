@@ -7,7 +7,7 @@ const { getUsers, addUser, getOneUser, updateUser, deleteUser, loginUser } = req
 const JwtAuthenticationMiddleware = require("../middlewares/JwtAuthentication.middleware");
 
 
-
+//login and signup -Public routes
 router.route('/login')
     .post(loginUser)
 
@@ -16,6 +16,7 @@ router.route('/')
 
 router.use(JwtAuthenticationMiddleware)
 
+//Protected Routes
 router.route('/')
     .get(getUsers)
 

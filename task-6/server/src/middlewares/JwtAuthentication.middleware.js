@@ -20,8 +20,7 @@ const JwtAuthenticationMiddleware = async (req, res, next) => {
         if (!decoded.user) {
             return res.status(401).send('Access denied. No token provided');
         }
-
-        const validateUser = await User.findById(decoded.user._id);
+        const validateUser = await User.findById(decoded.user.id);
 
         if (!validateUser) {
             return res.status(401).send('Access denied.');
