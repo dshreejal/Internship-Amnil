@@ -5,6 +5,7 @@ const imageUpload = require("../helpers/imageUpload");
 
 const { getUsers, addUser, getOneUser, updateUser, deleteUser, loginUser } = require("../modules/User/user.controller");
 const JwtAuthenticationMiddleware = require("../middlewares/JwtAuthentication.middleware");
+const BasicAuthenticationMiddleware = require("../middlewares/BasicAuthentication.middleware");
 
 
 //login and signup -Public routes
@@ -14,7 +15,8 @@ router.route('/login')
 router.route('/')
     .post(imageUpload.single('image'), addUser)
 
-router.use(JwtAuthenticationMiddleware)
+// router.use(JwtAuthenticationMiddleware)
+router.use(BasicAuthenticationMiddleware)
 
 //Protected Routes
 router.route('/')
