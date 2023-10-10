@@ -24,3 +24,5 @@ Here's a list of the tasks included in this repository:
 - [task-4.5](https://github.com/dshreejal/Internship-Amnil/tree/main/task-4.5)
 
 - [task-5](https://github.com/dshreejal/Internship-Amnil/tree/main/task-5)
+
+- [task-5](https://github.com/dshreejal/Internship-Amnil/tree/main/task-6)
