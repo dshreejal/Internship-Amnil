@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+    <button id="google-signin">Sign In with Google</button>
+    <button id="sign-out" style="display:none">Sign Out</button>
+
+    <script>
+        const firebaseConfig = {
+            //add your firebase config here
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const googleSignInBtn = document.getElementById('google-signin');
+        const signOutBtn = document.getElementById('sign-out');
+
+        googleSignInBtn.addEventListener('click', () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+
+
+            firebase.auth()
+                .signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    user.getIdToken().then((idToken) => {
+                        console.log(`User signed in: ${user.displayName}`);
+
+                        fetch('http://localhost:8000/api/auth/google-signin', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                token: idToken
+                            })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Success:', data);
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });
+
+                        googleSignInBtn.style.display = 'none';
+                        signOutBtn.style.display = 'block';
+                    });
+
+                })
+                .catch((error) => {
+                    console.error(`Sign-in error: ${error.message}`);
+                });
+        });
+
+        signOutBtn.addEventListener('click', () => {
+            firebase.auth()
+                .signOut()
+                .then(() => {
+                    console.log('User signed out');
+
+                    signOutBtn.style.display = 'none';
+                    googleSignInBtn.style.display = 'block';
+                })
+                .catch((error) => {
+                    console.error(`Sign-out error: ${error.message}`);
+                });
+        });
+    </script>
+
+</body>
+
+</html>

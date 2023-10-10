@@ -35,4 +35,23 @@ authController.login = async (req, res) => {
     }
 }
 
+authController.googleSignin = async (req, res) => {
+    try {
+        const { token } = req.body;
+        const idToken = await admin.auth().verifyIdToken(token);
+
+        if (!idToken) {
+            return res.status(404).json({ message: "Unable to login" });
+        }
+
+        const user = await admin.auth().getUser(idToken.uid);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.send(user);
+    } catch (err) {
+        res.status(500).json(err);
+        console.log(err);
+    }
+}
 module.exports = authController;
