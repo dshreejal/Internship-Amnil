@@ -9,16 +9,16 @@ const authRouter = require("./auth.route");
 
 const JwtAuthenticationMiddleware = require('../middlewares/JwtAuthentication.middleware');
 
-router.use("/api/auth", authRouter);
+router.use("/auth", authRouter);
 
-router.use("/api/users", userRouter);
-router.use("/api/products", produtRouter);
+router.use("/users", userRouter);
+router.use("/products", produtRouter);
 
 //authentication middleware
 router.use(JwtAuthenticationMiddleware)
 
 
-router.use("/api/orders", orderRouter);
-router.use("/api/store", storeRouter);
+router.use("/orders", orderRouter);
+router.use("/store", storeRouter);
 
 module.exports = router;
