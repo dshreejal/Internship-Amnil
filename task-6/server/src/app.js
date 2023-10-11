@@ -22,9 +22,9 @@ app.get("/home", (req, res) => {
 
 const routes = require("./routes");
 
-app.use("/", (req, res) => {
-    res.status(404).send("Server running successfully");
-});
+// app.use("/", (req, res) => {
+//     res.status(404).send("Server running successfully");
+// });
 
 app.use("/api", routes);
 

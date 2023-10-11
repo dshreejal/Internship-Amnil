@@ -2,9 +2,16 @@ const express = require('express');
 const router = express.Router();
 
 const authController = require('../modules/Auth/auth.controller');
+const FirebaseAuthenticationMiddleware = require('../middlewares/FirebaseAuthentication.middleware')
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 
-router.post('/google-signin', authController.googleSignin);
+
+//firebase authentication middleware
+router.use(FirebaseAuthenticationMiddleware);
+
+
+//private route
+router.get('/:userId', authController.getUser);
 module.exports = router;

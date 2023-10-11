@@ -20,23 +20,6 @@ authController.register = async (req, res) => {
 
 authController.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await admin.auth().getUserByEmail(email);
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        const token = await admin.auth().createCustomToken(user.uid);
-        res.json({ token });
-    } catch (err) {
-        res.status(500).json(err);
-        console.log(err);
-    }
-}
-
-authController.googleSignin = async (req, res) => {
-    try {
         const { token } = req.body;
         const idToken = await admin.auth().verifyIdToken(token);
 
@@ -52,6 +35,25 @@ authController.googleSignin = async (req, res) => {
     } catch (err) {
         res.status(500).json(err);
         console.log(err);
+    }
+}
+
+
+authController.getUser = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        const user = await admin.auth().getUser(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(user);
+
+    } catch (error) {
+        res.status(500).json(error);
+        console.log(error);
     }
 }
 module.exports = authController;

@@ -10,8 +10,27 @@
 </head>
 
 <body>
+    <div class="login-form">
+        <div>
+            <label for="">Email:</label>
+            <input type="text" id="email" name="email" placeholder="email">
+        </div>
+        <br>
+        <div>
+            <label for="">Password:</label>
+            <input type="password" id="password" name="password" placeholder="password">
+        </div>
+        <br>
+        <button id="login">Login</button>
+        <br>
+        <br>
+        <div>
+            OR
+        </div>
+    </div>
+    <br>
     <button id="google-signin">Sign In with Google</button>
-    <button id="sign-out" style="display:none">Sign Out</button>
+    <button id="logout" style="display:none">Logout</button>
 
     <script>
         const firebaseConfig = {
@@ -21,20 +40,25 @@
         firebase.initializeApp(firebaseConfig);
 
         const googleSignInBtn = document.getElementById('google-signin');
-        const signOutBtn = document.getElementById('sign-out');
 
-        googleSignInBtn.addEventListener('click', () => {
-            const provider = new firebase.auth.GoogleAuthProvider();
+        const loginForm = document.querySelector('.login-form');
+        const loginBtn = document.getElementById('login');
 
+        const logoutBtn = document.getElementById('logout');
+
+
+        loginBtn.addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
             firebase.auth()
-                .signInWithPopup(provider)
-                .then((result) => {
-                    const user = result.user;
+                .signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
                     user.getIdToken().then((idToken) => {
                         console.log(`User signed in: ${user.displayName}`);
 
-                        fetch('http://localhost:8000/api/auth/google-signin', {
+                        fetch('http://localhost:8000/api/auth/login', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -52,26 +76,68 @@
                             });
 
                         googleSignInBtn.style.display = 'none';
-                        signOutBtn.style.display = 'block';
+                        logoutBtn.style.display = 'block';
+                        loginForm.style.display = 'none';
                     });
-
+                    console.log(`User signed in: ${user.displayName}`);
                 })
                 .catch((error) => {
                     console.error(`Sign-in error: ${error.message}`);
                 });
         });
 
-        signOutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', () => {
             firebase.auth()
                 .signOut()
                 .then(() => {
                     console.log('User signed out');
 
-                    signOutBtn.style.display = 'none';
+                    logoutBtn.style.display = 'none';
                     googleSignInBtn.style.display = 'block';
+                    loginForm.style.display = 'block';
                 })
                 .catch((error) => {
                     console.error(`Sign-out error: ${error.message}`);
+                });
+        });
+
+
+
+        googleSignInBtn.addEventListener('click', () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth()
+                .signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    user.getIdToken().then((idToken) => {
+                        console.log(idToken);
+                        console.log(`User signed in: ${user.displayName}`);
+
+                        fetch('http://localhost:8000/api/auth/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                token: idToken
+                            })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Success:', data);
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });
+
+                        googleSignInBtn.style.display = 'none';
+                        loginForm.style.display = 'none';
+                        logoutBtn.style.display = 'block';
+                    });
+
+                })
+                .catch((error) => {
+                    console.error(`Sign-in error: ${error.message}`);
                 });
         });
     </script>
