@@ -30,7 +30,7 @@ router.use(JwtAuthenticationMiddleware)
 router.route('/')
     .post(imageUpload.single('image'), createProduct)
 
-router.route('/out-of-stock')
+router.route('/get/out-of-stock')
     .get(getOutOfStock)
 
 router.route('/:id')
