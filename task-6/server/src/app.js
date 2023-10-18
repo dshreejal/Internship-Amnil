@@ -22,9 +22,10 @@ app.get("/home", (req, res) => {
 
 const routes = require("./routes");
 
-// app.use("/", (req, res) => {
-//     res.status(404).send("Server running successfully");
-// });
+const swaggerUI = require('swagger-ui-express');
+const docs = require('./docs');
+
+app.use('/', swaggerUI.serve, swaggerUI.setup(docs));
 
 app.use("/api", routes);
 
