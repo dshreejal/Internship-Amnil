@@ -1,5 +1,6 @@
 const userComponent = require('./user/userComponent');
 const productComponent = require('./product/productComponent');
+const orderComponent = require('./order/orderComponent');
 
 module.exports = {
     components: {
@@ -12,7 +13,8 @@ module.exports = {
         },
         schemas: {
             ...userComponent,
-            ...productComponent
+            ...productComponent,
+            ...orderComponent
         }
     }
 };

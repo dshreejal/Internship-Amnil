@@ -7,6 +7,10 @@ module.exports = {
         {
             name: 'Product',
             description: 'API for managing products'
+        },
+        {
+            name: 'Order',
+            description: 'API for managing orders'
         }
     ]
 }
