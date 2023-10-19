@@ -5,6 +5,10 @@ module.exports = {
             description: 'API for managing users'
         },
         {
+            name: 'Auth',
+            description: 'API for managing authentication using firebase'
+        },
+        {
             name: 'Product',
             description: 'API for managing products'
         },

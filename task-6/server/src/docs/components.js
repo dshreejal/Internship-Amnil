@@ -1,4 +1,5 @@
 const userComponent = require('./user/userComponent');
+const authComponent = require('./auth/authComponent');
 const productComponent = require('./product/productComponent');
 const orderComponent = require('./order/orderComponent');
 const storeComponent = require('./store/storeComponent');
@@ -14,6 +15,7 @@ module.exports = {
         },
         schemas: {
             ...userComponent,
+            ...authComponent,
             ...productComponent,
             ...orderComponent,
             ...storeComponent
