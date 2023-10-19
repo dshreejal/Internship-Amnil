@@ -11,6 +11,10 @@ module.exports = {
         {
             name: 'Order',
             description: 'API for managing orders'
+        },
+        {
+            name: 'Store',
+            description: 'API for managing store'
         }
     ]
 }
