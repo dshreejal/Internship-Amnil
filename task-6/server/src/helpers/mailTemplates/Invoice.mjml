@@ -1,0 +1,57 @@
+<mjml>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-image
+          width="100px"
+          src="https://rewind.com/wp-content/uploads/2021/06/RWD_Why-Is-My-Shopify-Store-Not-Working_Blog_v1_Header.png"
+        ></mj-image>
+        <mj-divider border-color="#88B5EB"></mj-divider>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-text>
+          <h2>Invoice</h2>
+        </mj-text>
+        <mj-table>
+          <tr style="border-bottom: 1px solid #ecedee; text-align: left">
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Sub Total</th>
+          </tr>
+          <% products.forEach(function(product) { %>
+          <tr>
+            <td><%= product.product.name %></td>
+            <td>Rs. <%= product.product.price %></td>
+            <td><%= product.quantity %></td>
+            <td>Rs. <%= product.product.price * product.quantity %></td>
+          </tr>
+          <% }); %>
+        </mj-table>
+        <mj-text>Total Price: Rs. <%= total_price %> </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-text align="center"
+          >This is a computer-generated invoice. For more information, please
+          contact us through any of the mediums mentioned below:</mj-text
+        >
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-social align="center">
+          <mj-social-element name="facebook"></mj-social-element>
+          <mj-social-element name="twitter"></mj-social-element>
+          <mj-social-element name="instagram"></mj-social-element>
+        </mj-social>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

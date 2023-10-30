@@ -5,6 +5,12 @@ const Cart = require("../../models/Cart.model");
 const User = require("../../models/User.model");
 const Product = require("../../models/Product.model");
 
+const transporter = require("../../helpers/nodeMailer");
+const fs = require('fs');
+const path = require('path');
+const mjml = require('mjml');
+const ejs = require('ejs');
+
 
 exports.getOrders = async (req, res) => {
     const orders = await Order.find({}).populate("user").populate("products.product").select(["-__v", "-updatedAt"]);
@@ -171,13 +177,30 @@ exports.checkout = async (req, res) => {
         total_price: userCart.total_price
     });
 
+    const orderDetails = await Order.findById(order._id).populate("products.product");
+
     //delete the cart
     await Cart.findOneAndDelete({ user_id: userId, _id: cartId });
 
     //add order Id to user document
     await User.findByIdAndUpdate(userId, { $push: { orders: order._id } });
 
-    res.send(order);
+
+    const mjmlTemplate = fs.readFileSync(path.resolve(__dirname, '../../helpers/mailTemplates/Invoice.mjml'), 'utf8')
+
+    const template = ejs.compile(mjmlTemplate);
+    const mjmlContent = template(orderDetails);
+
+    const { html } = mjml(mjmlContent);
+
+    const info = await transporter.sendMail({
+        from: `"Ecommerce Backend" <${process.env.smtpUserEmail}>`,
+        to: req.user.email || "cassandra.kuhic@ethereal.email",
+        subject: "Invoice",
+        html: html,
+    });
+
+    res.send(orderDetails)
 }
 
 exports.aggregatedOrder = async (req, res) => {
