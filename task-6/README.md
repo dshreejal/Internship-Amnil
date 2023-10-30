@@ -7,6 +7,8 @@ Continued from [task-5](https://github.com/dshreejal/Internship-Amnil/tree/main/
 - Implement both Basic authentication as well as token based authentication strategies.
 - Implement proper logic for validating the user in database.
 - Add authentication middleware to all the protected routes.
+- Add Api Swagger documentation
+- Send Invoice email after checkout
 
 ## Project Structure
 
