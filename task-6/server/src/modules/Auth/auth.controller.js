@@ -39,6 +39,7 @@ authController.login = async (req, res) => {
         if (!DB_User) {
             const newUser = await User.create({
                 username: user.displayName,
+                name: user.displayName,
                 email: user.email,
                 image: user.photoURL
             });
@@ -51,18 +52,20 @@ authController.login = async (req, res) => {
                 }
             }
             const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
-            return res.json(newUser, authToken);
+            return res.send(newUser, authToken);
+        } else {
+            const payload = {
+                user: {
+                    id: DB_User._id,
+                    username: DB_User.username,
+                    email: DB_User.email ? DB_User.email : null
+                }
+            }
+            const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+            res.send(DB_User, authToken);
         }
 
-        const payload = {
-            user: {
-                id: DB_User._id,
-                username: DB_User.username,
-                email: DB_User.email ? DB_User.email : null
-            }
-        }
-        const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
-        res.send(DB_User, authToken);
+
     } catch (err) {
         res.status(500).json(err);
         console.log(err);
