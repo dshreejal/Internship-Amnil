@@ -1,4 +1,6 @@
 const { admin } = require('../../config/admin');
+const User = require("../../models/User.model");
+const jwt = require('jsonwebtoken');
 
 const authController = {};
 
@@ -31,7 +33,36 @@ authController.login = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        res.send(user);
+
+        const DB_User = await User.findOne({ email: user.email });
+
+        if (!DB_User) {
+            const newUser = await User.create({
+                username: user.displayName,
+                email: user.email,
+                image: user.photoURL
+            });
+
+            const payload = {
+                user: {
+                    id: newUser._id,
+                    username: newUser.username,
+                    email: newUser.email ? newUser.email : null
+                }
+            }
+            const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+            return res.json(newUser, authToken);
+        }
+
+        const payload = {
+            user: {
+                id: DB_User._id,
+                username: DB_User.username,
+                email: DB_User.email ? DB_User.email : null
+            }
+        }
+        const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+        res.send(DB_User, authToken);
     } catch (err) {
         res.status(500).json(err);
         console.log(err);

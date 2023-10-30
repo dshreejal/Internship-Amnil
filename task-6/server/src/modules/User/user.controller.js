@@ -82,7 +82,8 @@ exports.loginUser = async (req, res) => {
     const payload = {
         user: {
             id: user._id,
-            username: user.username
+            username: user.username,
+            email: user.email ? user.email : null
         }
     }
 
