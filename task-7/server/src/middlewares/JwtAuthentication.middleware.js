@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User.model');
+const pool = require('../config/db');
 
 const JwtAuthenticationMiddleware = async (req, res, next) => {
     try {
@@ -21,16 +21,16 @@ const JwtAuthenticationMiddleware = async (req, res, next) => {
         if (!decoded.user) {
             return res.status(401).send('Access denied. Invalid token');
         }
-        const validateUser = await User.findById(decoded.user.id);
+        const validateUser = await pool.query('SELECT * FROM users WHERE id=$1', [decoded.user.id]);
 
-        if (!validateUser) {
+        if (validateUser.rowCount === 0) {
             return res.status(401).send('Access denied. User not found');
         }
 
         req.user = decoded.user;
         next();
     } catch (error) {
-        res.status(401).send('Invalid token');
+        res.status(401).send('No Token Provided');
     }
 }
 

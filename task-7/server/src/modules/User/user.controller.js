@@ -1,41 +1,39 @@
-const User = require("../../models/User.model");
+const pool = require('../../config/db');
 const { getImageUrl } = require("../../helpers/getImageUrl");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 
 exports.getUsers = async (req, res) => {
-    const name = req.query.name;
-    const filterOptions = {};
-
-    if (name) {
-        filterOptions.name = { $regex: name, $options: "i" };
+    const result = await pool.query('SELECT * FROM users');
+    if (result.rowCount === 0) {
+        return res.status(200).send('No users found')
     }
-    const users = await User.find(filterOptions).populate({
-        path: 'orders',
-        select: ' total_price',
-    });
+    users = result.rows;
     users.forEach((user) => {
         user.image = getImageUrl(req, user.image);
+        delete user.password;
     });
     res.status(200).send(users);
 }
 
 exports.getOneUser = async (req, res) => {
-    const user = await User.findById(req.params.id);
-    if (!user) {
+    const user = await pool.query('SELECT * from users WHERE id=$1', [req.params.id]);
+    if (user.rowCount === 0) {
         return res.status(404).send('User not found');
     }
-    user.image = getImageUrl(req, user.image);
-    res.status(200).send(user);
+    delete user.rows[0].password;
+
+    user.rows[0].image = getImageUrl(req, user.rows[0].image);
+    res.status(200).send(user.rows[0]);
 }
 
 exports.addUser = async (req, res) => {
     const file = req.file.filename;
 
-    const userAlreadyPresent = await User.findOne({ username: req.body.username });
-    if (userAlreadyPresent) {
-        return res.status(400).send('User already present');
+    const usernameCheck = await pool.query('SELECT * FROM users WHERE username=$1', [req.body.username]);
+    if (usernameCheck.rowCount !== 0) {
+        return res.status(400).send('User already exists');
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -44,36 +42,38 @@ exports.addUser = async (req, res) => {
     const user = {
         name: req.body.name,
         username: req.body.username,
+        email: req.body.email,
         password: securePassword,
         address: req.body.address,
         image: file
     }
 
-    const newUser = await User.create(user);
+    const newUser = await pool.query('INSERT INTO users (name, username, email, password, address, image) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [user.name, user.username, user.email, user.password, user.address, user.image]);
 
     const payload = {
         user: {
-            id: newUser._id,
-            username: newUser.username
+            id: newUser.rows[0].id,
+            username: newUser.rows[0].username,
+            email: newUser.rows[0].email ? newUser.rows[0].email : null
         }
     }
 
     const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-    newUser.image = getImageUrl(req, newUser.image);
-    res.status(201).send({ newUser, authToken });
+    newUser.rows[0].image = getImageUrl(req, newUser.rows[0].image);
+    res.status(201).send({ user: newUser.rows[0], authToken });
 }
 
 exports.loginUser = async (req, res) => {
     const { username, password } = req.body;
 
-    const user = await User.findOne({ username });
+    const user = await pool.query('SELECT * FROM users WHERE username=$1', [username]);
 
-    if (!user) {
+    if (user.rowCount === 0) {
         return res.status(404).send('User not found');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.rows[0].password);
 
     if (!isPasswordValid) {
         return res.status(400).send('Invalid password');
@@ -81,9 +81,9 @@ exports.loginUser = async (req, res) => {
 
     const payload = {
         user: {
-            id: user._id,
-            username: user.username,
-            email: user.email ? user.email : null
+            id: user.rows[0].id,
+            username: user.rows[0].username,
+            email: user.rows[0].email ? user.rows[0].email : null
         }
     }
 
@@ -94,9 +94,9 @@ exports.loginUser = async (req, res) => {
 }
 
 exports.updateUser = async (req, res) => {
-    const user = await User.findById(req.params.id);
+    const user = await pool.query('SELECT * FROM users WHERE id=$1', [req.params.id]);
 
-    if (!user) {
+    if (user.rowCount === 0) {
         return res.status(404).send('User not found');
     }
 
@@ -106,25 +106,28 @@ exports.updateUser = async (req, res) => {
     }
 
     const updateUser = {
-        name: req.body.name || user.name,
-        address: req.body.address || user.address,
-        image: file || user.image
+        ...user.rows[0],
+        name: req.body.name || user.rows[0].name,
+        address: req.body.address || user.rows[0].address,
+        image: file || user.rows[0].image
     }
 
 
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, updateUser, { new: true });
+    const result = await pool.query('UPDATE users SET name=$1, address=$2, image=$3 WHERE id=$4 RETURNING *', [updateUser.name, updateUser.address, updateUser.image, req.params.id]);
+
+    const updatedUser = result.rows[0];
     updatedUser.image = getImageUrl(req, updatedUser.image);
 
     res.status(200).send(updatedUser);
 }
 
 exports.deleteUser = async (req, res) => {
-    const user = await User.findById(req.params.id);
-    if (!user) {
+    const user = await pool.query('SELECT * FROM users WHERE id=$1', [req.params.id]);
+    if (user.rowCount === 0) {
         return res.status(404).send('User not found');
     }
 
-    await User.findByIdAndDelete(req.params.id);
+    await pool.query('DELETE FROM users WHERE id=$1', [req.params.id]);
     res.status(200).send('user deleted');
 }
 
