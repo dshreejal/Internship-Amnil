@@ -7,16 +7,29 @@ const ejs = require('ejs');
 
 
 exports.getOrders = async (req, res) => {
-    // const orders = await Order.find({}).populate("user").populate("products.product").select(["-__v", "-updatedAt"]);
-    // res.status(200).send(orders);
+    const getOrder = await pool.query('SELECT * FROM orders');
+
+    if (getOrder.rowCount === 0) {
+        return res.status(404).send('Order not found');
+    }
+    res.send(getOrder.rows);
+
 }
 
 exports.getOneOrder = async (req, res) => {
-    // const order = await Order.findById(req.params.id).populate("user").populate("products.product");
-    // if (!order) {
-    //     return res.status(404).send('Order not found');
-    // }
-    // res.status(200).send(order);
+    const order = await pool.query('SELECT * FROM orders WHERE id = $1', [req.params.id]);
+    if (order.rowCount === 0) {
+        return res.status(404).send('Order not found');
+    }
+
+    const orderProductQuery = `
+        SELECT op.*, p.name, p.price
+        FROM order_products AS op
+        JOIN products AS p ON op.product_id = p.id
+        WHERE op.order_id = $1
+    `;
+    const orderProduct = await pool.query(orderProductQuery, [order.rows[0].id]);
+    res.send(orderProduct.rows);
 }
 
 exports.viewCart = async (req, res) => {
@@ -134,63 +147,84 @@ exports.addToCart = async (req, res) => {
 }
 
 exports.checkout = async (req, res) => {
-    // const userId = req.params.userId;
-    // const cartId = req.params.cartId;
+    const userId = req.params.userId;
+    const cartId = req.params.cartId;
 
-    // const userCart = await Cart.findOne({ user_id: userId, _id: cartId });
-    // if (!userCart) {
-    //     return res.status(404).send('Cart not found');
-    // }
+    const userCartResult = await pool.query('SELECT * FROM carts WHERE user_id = $1 AND id = $2', [userId, cartId])
+    if (userCartResult.rowCount === 0) {
+        return res.status(404).send('Cart not found');
+    }
 
-    // if (userCart.total_price < 1000) {
-    //     return res.status(400).send('Minimum threshold for total price of an order is 1000');
-    // }
+    const userCart = userCartResult.rows[0];
 
-    // //update the product quantity
-    // for (const product of userCart.products) {
-    //     const productDetails = await Product.findById(product.product);
-    //     if (productDetails) {
-    //         productDetails.quantity -= product.quantity;
-    //         if (productDetails.quantity < 0) {
-    //             return res.status(400).send('Product quantity is not available');
-    //         }
-    //         await Product.findByIdAndUpdate(product.product, { quantity: productDetails.quantity });
-    //     }
-    //     else {
-    //         return res.status(404).send('Product not found');
-    //     }
-    // }
+    const cartProductsQuery = await pool.query('SELECT cp.quantity, cp.price, p.id, p.name FROM cart_products cp JOIN products p ON cp.product_id = p.id WHERE cp.cart_id = $1', [userCart.id]);
 
-    // const order = await Order.create({
-    //     user: userId,
-    //     products: userCart.products,
-    //     total_price: userCart.total_price
-    // });
+    userCart.products = cartProductsQuery.rows;
 
-    // const orderDetails = await Order.findById(order._id).populate("products.product");
+    if (userCart.total_price < 1000) {
+        return res.status(400).send('Minimum threshold for total price of an order is 1000');
+    }
 
-    // //delete the cart
-    // await Cart.findOneAndDelete({ user_id: userId, _id: cartId });
+    const order = await pool.query('INSERT INTO orders (user_id, total_price) VALUES ($1, $2) RETURNING *', [userId, userCart.total_price]);
+    const orderId = order.rows[0].id;
 
-    // //add order Id to user document
-    // await User.findByIdAndUpdate(userId, { $push: { orders: order._id } });
+    for (const product of userCart.products) {
+
+        const productDetailsResult = await pool.query('SELECT * FROM products WHERE id = $1', [product.id]);
+        if (productDetailsResult.rowCount === 0) {
+            return res.status(404).send('Product not found');
+        }
+
+        const productDetails = productDetailsResult.rows[0];
 
 
-    // const mjmlTemplate = fs.readFileSync(path.resolve(__dirname, '../../helpers/mailTemplates/Invoice.mjml'), 'utf8')
+        if (productDetails) {
+            productDetails.quantity -= product.quantity;
+            if (productDetails.quantity < 0) {
+                return res.status(400).send('Product quantity is not available');
+            }
+            await pool.query('UPDATE products SET quantity = $1 WHERE id = $2', [productDetails.quantity, product.id]);
 
-    // const template = ejs.compile(mjmlTemplate);
-    // const mjmlContent = template(orderDetails);
+            await pool.query('INSERT INTO order_products (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)', [orderId, product.id, product.quantity, product.price]);
+        }
+        else {
+            return res.status(404).send('Product not found');
+        }
+    }
 
-    // const { html } = mjml(mjmlContent);
 
-    // const info = await transporter.sendMail({
-    //     from: `"Ecommerce Backend" <${process.env.smtpUserEmail}>`,
-    //     to: req.user.email || "cassandra.kuhic@ethereal.email",
-    //     subject: "Invoice",
-    //     html: html,
-    // });
+    await pool.query('UPDATE orders SET total_price=$1 where id = $2', [userCart.total_price, orderId,]);
 
-    // res.send(orderDetails)
+    const getOrder = await pool.query('SELECT * FROM orders WHERE id = $1', [orderId]);
+    const orderDetailsQuery = `
+        SELECT op.*, p.name, p.price
+        FROM order_products AS op
+        JOIN products AS p ON op.product_id = p.id
+        WHERE op.order_id = $1
+    `;
+    const orderDetails = await pool.query(orderDetailsQuery, [order.rows[0].id]);
+
+    const displayData = getOrder.rows[0];
+    displayData.products = orderDetails.rows;
+
+    await pool.query('DELETE FROM cart_products WHERE cart_id = $1', [userCart.id]);
+    await pool.query('DELETE FROM carts WHERE id = $1', [userCart.id]);
+
+    const mjmlTemplate = fs.readFileSync(path.resolve(__dirname, '../../helpers/mailTemplates/Invoice.mjml'), 'utf8')
+
+    const template = ejs.compile(mjmlTemplate);
+    const mjmlContent = template(displayData);
+
+    const { html } = mjml(mjmlContent);
+
+    const info = await transporter.sendMail({
+        from: `"Ecommerce Backend" <${process.env.smtpUserEmail}>`,
+        to: req.user.email || "cassandra.kuhic@ethereal.email",
+        subject: "Invoice",
+        html: html,
+    });
+
+    res.send(displayData)
 }
 
 exports.aggregatedOrder = async (req, res) => {

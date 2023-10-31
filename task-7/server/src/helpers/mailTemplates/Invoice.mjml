@@ -24,10 +24,10 @@
           </tr>
           <% products.forEach(function(product) { %>
           <tr>
-            <td><%= product.product.name %></td>
-            <td>Rs. <%= product.product.price %></td>
+            <td><%= product.name %></td>
+            <td>Rs. <%= product.price %></td>
             <td><%= product.quantity %></td>
-            <td>Rs. <%= product.product.price * product.quantity %></td>
+            <td>Rs. <%= product.price * product.quantity %></td>
           </tr>
           <% }); %>
         </mj-table>

@@ -108,14 +108,12 @@ CREATE TABLE order_products (
 CREATE OR REPLACE FUNCTION update_order_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE orders
-  SET updated_at = NOW()
-  WHERE id = NEW.order_id;
+  NEW.updated_at = NOW();
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER order_products_update_trigger
-AFTER INSERT OR UPDATE ON order_products
+AFTER INSERT OR UPDATE ON orders
 FOR EACH ROW
 EXECUTE FUNCTION update_order_updated_at();
