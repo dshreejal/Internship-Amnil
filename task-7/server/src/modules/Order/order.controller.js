@@ -12,6 +12,18 @@ exports.getOrders = async (req, res) => {
     if (getOrder.rowCount === 0) {
         return res.status(404).send('Order not found');
     }
+
+    for (const order of getOrder.rows) {
+        const orderProductQuery = `
+                SELECT op.*, p.name, p.price
+                FROM order_products AS op
+                JOIN products AS p ON op.product_id = p.id
+                WHERE op.order_id = $1
+            `;
+        const orderProduct = await pool.query(orderProductQuery, [order.id]);
+        order.products = orderProduct.rows;
+    }
+
     res.send(getOrder.rows);
 
 }
@@ -228,36 +240,24 @@ exports.checkout = async (req, res) => {
 }
 
 exports.aggregatedOrder = async (req, res) => {
+    const query = `
+    SELECT
+      EXTRACT(MONTH FROM created_at) AS month,
+      EXTRACT(DAY FROM created_at) AS day,
+      EXTRACT(YEAR FROM created_at) AS year,
+      COUNT(*) AS total_orders,
+      SUM(total_price) AS total_price
+    FROM orders
+    GROUP BY year, month, day
+    ORDER BY year, month, day;
+  `;
 
-    // const aggregateQuery = [
-    //     {
-    //         $group: {
-    //             _id: "$user",
-    //             totalOrders: { $sum: 1 }
-    //         }
-    //     }
-    // ];
+    const result = await pool.query(query);
 
+    if (result.rowCount === 0) {
+        return res.status(404).send('No orders found');
+    }
 
-    // const aggregateQuery = [
-    //     {
-    //         $group: {
-    //             _id: {
-    //                 month: { $month: "$createdAt" },
-    //                 day: { $dayOfMonth: "$createdAt" },
-    //                 year: { $year: "$createdAt" }
-    //             },
-    //             totalOrders: { $sum: 1 },
-    //             totalPrice: { $sum: "$total_price" }
-    //         }
-    //     }
-    // ];
+    res.send(result.rows);
 
-    // const aggregateOrder = await Order.aggregate(aggregateQuery);
-
-    // if (aggregateOrder) {
-    //     return res.status(200).json({ order: aggregateOrder, message: 'All orders fetched successfully!' });
-    // } else {
-    //     return res.status(400).json({ message: 'Error fetching orders' });
-    // }
 }
