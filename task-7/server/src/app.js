@@ -6,18 +6,10 @@ const app = express();
 const ejs = require("ejs");
 
 
-
-
 app.use(express.static('public'));
 
 app.use(express.json());
 
-app.set("views", "./src/views");
-app.set("view engine", "ejs");
-
-app.get("/home", (req, res) => {
-    res.render("home");
-});
 
 const routes = require("./routes");
 
