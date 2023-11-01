@@ -13,8 +13,13 @@ app.use(express.json());
 
 const routes = require("./routes");
 
+const swaggerUI = require('swagger-ui-express');
+const docs = require('./docs');
+
 
 app.use("/api", routes);
+
+app.use('/', swaggerUI.serve, swaggerUI.setup(docs));
 
 
 
