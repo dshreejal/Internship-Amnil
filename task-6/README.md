@@ -48,6 +48,10 @@ Add the necessary environment variables from .env.example file
 PORT = 8000
 MongoURL = 'mongodb://localhost:27017/'
 JWT_SECRET='Some Secret'
+smtpHost = 'smtp host'
+smtpPort = 1234
+smtpUserEmail = 'user email'
+smtpUserPassword = 'user password'
 ```
 
 Run the server
