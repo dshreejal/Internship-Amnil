@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const mjml = require('mjml');
 const ejs = require('ejs');
+const { start } = require("repl");
 
 
 exports.getOrders = async (req, res) => {
@@ -239,18 +240,59 @@ exports.checkout = async (req, res) => {
     res.send(displayData)
 }
 
-exports.aggregatedOrder = async (req, res) => {
+exports.getStatisticsByDate = async (req, res) => {
+    const date = req.body.date;
+
+    if (date) {
+        const getDate = new Date(date);
+        getDate.setUTCHours(0, 0, 0, 0);
+
+        const query = `
+        SELECT
+            EXTRACT(MONTH FROM o.created_at) AS month,
+            EXTRACT(DAY FROM o.created_at) AS day,
+            EXTRACT(YEAR FROM o.created_at) AS year,
+            COUNT(DISTINCT o.id) AS total_orders,
+            SUM(op.total_price) AS total_price,
+            SUM(op.quantity) AS no_of_products
+            FROM orders o
+            LEFT JOIN (
+                SELECT op.order_id, SUM(op.quantity) AS quantity, SUM(op.price) AS total_price
+                        FROM order_products op
+                    GROUP BY op.order_id
+                ) op ON o.id = op.order_id
+            WHERE DATE(o.created_at) = $1
+            GROUP BY year, month, day
+            ORDER BY year, month, day;
+    `;
+
+        const result = await pool.query(query, [getDate.toISOString()]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).send('No orders found for the date');
+        }
+
+        return res.send(result.rows);
+
+    }
+
     const query = `
-    SELECT
-      EXTRACT(MONTH FROM created_at) AS month,
-      EXTRACT(DAY FROM created_at) AS day,
-      EXTRACT(YEAR FROM created_at) AS year,
-      COUNT(*) AS total_orders,
-      SUM(total_price) AS total_price
-    FROM orders
-    GROUP BY year, month, day
-    ORDER BY year, month, day;
-  `;
+        SELECT
+            EXTRACT(MONTH FROM o.created_at) AS month,
+            EXTRACT(DAY FROM o.created_at) AS day,
+            EXTRACT(YEAR FROM o.created_at) AS year,
+            COUNT(DISTINCT o.id) AS total_orders,
+            SUM(op.total_price) AS total_price,
+            SUM(op.quantity) AS no_of_products
+            FROM orders o
+            LEFT JOIN (
+                SELECT op.order_id, SUM(op.quantity) AS quantity, SUM(op.price) AS total_price
+                        FROM order_products op
+                    GROUP BY op.order_id
+                ) op ON o.id = op.order_id
+            GROUP BY year, month, day
+            ORDER BY year, month, day;
+    `;
 
     const result = await pool.query(query);
 
@@ -260,4 +302,107 @@ exports.aggregatedOrder = async (req, res) => {
 
     res.send(result.rows);
 
+}
+
+exports.getTotalRevenew = async (req, res) => {
+    let startDate = req.body.startDate;
+    let endDate = req.body.endDate;
+
+    if (startDate && endDate) {
+        startDate = new Date(startDate);
+        endDate = new Date(endDate);
+        startDate.setUTCHours(0, 0, 0, 0);
+        endDate.setUTCHours(0, 0, 0, 0);
+
+        const query = `
+        SELECT
+            SUM(op.total_price) AS total_revenew
+            FROM orders o
+            LEFT JOIN (
+                SELECT op.order_id, SUM(op.price) AS total_price
+                        FROM order_products op
+                    GROUP BY op.order_id
+                ) op ON o.id = op.order_id
+            WHERE DATE(o.created_at) BETWEEN $1 AND $2
+    `;
+
+        const result = await pool.query(query, [startDate.toISOString(), endDate.toISOString()]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).send('No orders found for the date');
+        }
+
+        return res.send(result.rows);
+
+    }
+
+    const query = `
+        SELECT
+            SUM(op.total_price) AS total_revenew
+            FROM orders o
+            LEFT JOIN (
+                SELECT op.order_id, SUM(op.price) AS total_price
+                        FROM order_products op
+                    GROUP BY op.order_id
+                ) op ON o.id = op.order_id
+    `;
+
+    const result = await pool.query(query);
+
+    if (result.rowCount === 0) {
+        return res.status(404).send('No orders found');
+    }
+
+    return res.send(result.rows);
+}
+
+exports.getTopSoldProducts = async (req, res) => {
+    let startDate = req.body.startDate;
+    let endDate = req.body.endDate;
+
+    if (startDate && endDate) {
+        startDate = new Date(startDate);
+        endDate = new Date(endDate);
+        startDate.setUTCHours(0, 0, 0, 0);
+        endDate.setUTCHours(0, 0, 0, 0);
+
+        const query = `
+        SELECT
+            p.name,
+            SUM(op.quantity) AS total_quantity
+            FROM order_products op
+            LEFT JOIN products p ON op.product_id = p.id
+            WHERE DATE(op.created_at) BETWEEN $1 AND $2
+            GROUP BY p.name
+            ORDER BY total_quantity DESC
+            LIMIT 10;
+    `;
+
+        const result = await pool.query(query, [startDate.toISOString(), endDate.toISOString()]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).send('No orders found for the date');
+        }
+
+        return res.send(result.rows);
+
+    }
+    const query = `
+        SELECT
+            p.name,
+            SUM(op.quantity) AS total_quantity
+            FROM order_products op
+            LEFT JOIN products p ON op.product_id = p.id
+            GROUP BY p.name
+            ORDER BY total_quantity DESC
+            LIMIT 10;
+    `;
+
+    const result = await pool.query(query);
+
+    if (result.rowCount === 0) {
+        return res.status(404).send('No orders found');
+    }
+
+    return res.send(result.rows);
 }

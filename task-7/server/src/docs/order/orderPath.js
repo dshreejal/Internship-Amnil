@@ -21,7 +21,7 @@ module.exports = {
     '/orders/checkout/{userId}/{cartId}': {
         ...checkOut
     },
-    '/orders/statistics/published': {
+    '/orders/statistics/byDate': {
         ...aggregatedOrder
     }
 }

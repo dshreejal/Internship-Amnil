@@ -101,7 +101,8 @@ CREATE TABLE order_products (
     order_id INTEGER REFERENCES orders(id),
     product_id INTEGER REFERENCES products(id),
     quantity INTEGER,
-    price NUMERIC
+    price NUMERIC,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 
 -- Create a trigger to automatically update the updated_at column
