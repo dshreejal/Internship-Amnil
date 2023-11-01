@@ -1,4 +1,4 @@
-# Task 6
+# Task 7
 
 Continued from [task-6](https://github.com/dshreejal/Internship-Amnil/tree/main/task-6),
 
