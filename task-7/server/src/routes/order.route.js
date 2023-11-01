@@ -17,10 +17,10 @@ router.route('/view-cart/:id').get(viewCart)
 router.route('/checkout/:userId/:cartId')
     .post(checkout);
 
-router.route('/statistics/byDate').get(getStatisticsByDate)
+router.route('/statistics/byDate/:date?').get(getStatisticsByDate)
 
-router.route('/statistics/totalRevenew').get(getTotalRevenew)
+router.route('/statistics/totalRevenew/:startDate?/:endDate?').get(getTotalRevenew)
 
-router.route('/statistics/topSoldProducts').get(getTopSoldProducts)
+router.route('/statistics/topSoldProducts/:startDate?/:endDate?').get(getTopSoldProducts)
 
 module.exports = router;

@@ -4,34 +4,6 @@ module.exports = {
         description: 'Get products',
         summary: 'Get products',
         operationId: 'getProducts',
-
-        parameters: [
-            {
-                name: 'name',
-                in: 'query',
-                description: 'name of product to search',
-            },
-            {
-                name: 'description',
-                in: 'query',
-                description: 'description of product to search',
-            },
-            {
-                name: 'sort',
-                in: 'query',
-                description: 'sort products by price',
-                schema: {
-                    type: 'string',
-                    enum: ['price', '-price']
-                }
-            },
-            {
-                name: 'filter',
-                in: 'query',
-                description: 'filter products by product type',
-            },
-        ],
-
         requestBody: {
         },
 

@@ -46,7 +46,7 @@ router.route('/update-quantity/:id')
     .patch(updateProductQuantity)
 
 
-router.route('/statistics/topSearchProducts').get(getTopSearchProducts)
+router.route('/statistics/topSearchProducts/:startDate?/:endDate?').get(getTopSearchProducts)
 
 
 module.exports = router;

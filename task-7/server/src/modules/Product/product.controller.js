@@ -176,8 +176,8 @@ exports.deleteProduct = async (req, res) => {
 }
 
 exports.getTopSearchProducts = async (req, res) => {
-    let startDate = req.body.startDate;
-    let endDate = req.body.endDate;
+    let startDate = req.params.startDate;
+    let endDate = req.params.endDate;
 
     if (startDate && endDate) {
         startDate = new Date(startDate);

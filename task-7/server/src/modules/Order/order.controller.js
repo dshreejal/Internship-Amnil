@@ -241,7 +241,7 @@ exports.checkout = async (req, res) => {
 }
 
 exports.getStatisticsByDate = async (req, res) => {
-    const date = req.body.date;
+    const date = req.params.date;
 
     if (date) {
         const getDate = new Date(date);
@@ -305,8 +305,8 @@ exports.getStatisticsByDate = async (req, res) => {
 }
 
 exports.getTotalRevenew = async (req, res) => {
-    let startDate = req.body.startDate;
-    let endDate = req.body.endDate;
+    let startDate = req.params.startDate;
+    let endDate = req.params.endDate;
 
     if (startDate && endDate) {
         startDate = new Date(startDate);
@@ -357,8 +357,8 @@ exports.getTotalRevenew = async (req, res) => {
 }
 
 exports.getTopSoldProducts = async (req, res) => {
-    let startDate = req.body.startDate;
-    let endDate = req.body.endDate;
+    let startDate = req.params.startDate;
+    let endDate = req.params.endDate;
 
     if (startDate && endDate) {
         startDate = new Date(startDate);
