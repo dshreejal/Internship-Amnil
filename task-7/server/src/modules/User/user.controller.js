@@ -10,10 +10,28 @@ exports.getUsers = async (req, res) => {
         return res.status(200).send('No users found')
     }
     users = result.rows;
-    users.forEach((user) => {
+    for (const user of users) {
         user.image = getImageUrl(req, user.image);
         delete user.password;
-    });
+
+        const userOrder = await pool.query('SELECT * FROM orders WHERE user_id=$1', [user.id]);
+
+        if (userOrder.rowCount !== 0) {
+            user.order = userOrder.rows;
+            for (const order of user.order) {
+                const orderItems = await pool.query('SELECT * FROM order_products WHERE order_id=$1', [order.id]);
+                if (orderItems.rowCount !== 0) {
+                    order.items = orderItems.rows;
+                    for (const item of order.items) {
+                        const product = await pool.query('SELECT * FROM products WHERE id=$1', [item.product_id]);
+                        if (product.rowCount !== 0) {
+                            item.product = product.rows[0];
+                        }
+                    }
+                }
+            }
+        }
+    }
     res.status(200).send(users);
 }
 
@@ -25,6 +43,25 @@ exports.getOneUser = async (req, res) => {
     delete user.rows[0].password;
 
     user.rows[0].image = getImageUrl(req, user.rows[0].image);
+
+    const userOrder = await pool.query('SELECT * FROM orders WHERE user_id=$1', [user.rows[0].id]);
+
+    if (userOrder.rowCount !== 0) {
+        user.rows[0].order = userOrder.rows;
+        for (const order of user.rows[0].order) {
+            const orderItems = await pool.query('SELECT * FROM order_products WHERE order_id=$1', [order.id]);
+            if (orderItems.rowCount !== 0) {
+                order.items = orderItems.rows;
+                for (const item of order.items) {
+                    const product = await pool.query('SELECT * FROM products WHERE id=$1', [item.product_id]);
+                    if (product.rowCount !== 0) {
+                        item.product = product.rows[0];
+                    }
+                }
+            }
+        }
+    }
+
     res.status(200).send(user.rows[0]);
 }
 
