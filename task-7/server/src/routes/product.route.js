@@ -8,6 +8,8 @@ const
         deleteProduct,
         getOutOfStock,
         updateProductQuantity,
+        searchProducts,
+        getTopSearchProducts,
     } = require("../modules/Product/product.controller");
 
 const router = express.Router();
@@ -19,6 +21,9 @@ const JwtAuthenticationMiddleware = require("../middlewares/JwtAuthentication.mi
 //Public routes
 router.route('/')
     .get(getProducts)
+
+router.route('/search')
+    .get(searchProducts)
 
 router.route('/:id')
     .get(getOneProduct)
@@ -39,6 +44,9 @@ router.route('/:id')
 
 router.route('/update-quantity/:id')
     .patch(updateProductQuantity)
+
+
+router.route('/statistics/topSearchProducts').get(getTopSearchProducts)
 
 
 module.exports = router;

@@ -2,7 +2,17 @@ const pool = require('../../config/db')
 const { getImageUrl } = require("../../helpers/getImageUrl");
 
 exports.getProducts = async (req, res) => {
-    const { name, description, sort, filter } = req.query;
+    const products = await pool.query('SELECT * FROM products');
+
+    products.rows.forEach((product) => {
+        product.image = getImageUrl(req, product.image);
+    });
+
+    res.status(200).send(products.rows);
+}
+
+exports.searchProducts = async (req, res) => {
+    const { name, sort } = req.query;
 
     let filterConditions = [];
     let queryParams = [];
@@ -10,16 +20,6 @@ exports.getProducts = async (req, res) => {
     if (name) {
         filterConditions.push("name ILIKE $1");
         queryParams.push(`%${name}%`);
-    }
-
-    if (description) {
-        filterConditions.push("description ILIKE $2");
-        queryParams.push(`%${description}%`);
-    }
-
-    if (filter) {
-        filterConditions.push("product_type ILIKE $3");
-        queryParams.push(`%${filter}%`);
     }
 
     let sortQuery = "";
@@ -42,7 +42,18 @@ exports.getProducts = async (req, res) => {
 
     const result = await pool.query(query, queryParams);
 
+    if (result.rowCount === 0) {
+        return res.status(404).send('No products found');
+    }
+
     const products = result.rows;
+
+    if (name) {
+        for (const product of products) {
+            const searchKeyword = name;
+            await pool.query('INSERT INTO product_search (product_id, search_count, search_keyword) VALUES ($1, 1, $2) ON CONFLICT (product_id) DO UPDATE SET search_count = product_search.search_count + 1, search_keyword = $2', [product.id, searchKeyword]);
+        }
+    }
 
     products.forEach((product) => {
         product.image = getImageUrl(req, product.image);
@@ -160,8 +171,61 @@ exports.deleteProduct = async (req, res) => {
 
     await pool.query('DELETE FROM products WHERE id=$1', [req.params.id]);
 
-    // await Store.findByIdAndUpdate(product.store, { $pull: { products: product._id } });
-
     res.status(200).send("product deleted successfully");
 
+}
+
+exports.getTopSearchProducts = async (req, res) => {
+    let startDate = req.body.startDate;
+    let endDate = req.body.endDate;
+
+    if (startDate && endDate) {
+        startDate = new Date(startDate);
+        endDate = new Date(endDate);
+        startDate.setUTCHours(0, 0, 0, 0);
+        endDate.setUTCHours(0, 0, 0, 0);
+
+        const query = `
+        SELECT
+            ps.search_keyword,
+            ps.product_id,
+            p.name as product_name,  
+            SUM(ps.search_count) AS total_search
+        FROM product_search ps
+        LEFT JOIN products p ON ps.product_id = p.id
+        WHERE DATE(ps.created_at) BETWEEN $1 AND $2
+        GROUP BY ps.search_keyword, ps.product_id, p.name
+        ORDER BY total_search DESC
+        LIMIT 10;
+    `;
+
+        const result = await pool.query(query, [startDate.toISOString(), endDate.toISOString()]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).send('No orders found for the date');
+        }
+
+        return res.send(result.rows);
+    }
+
+    const query = `
+        SELECT
+            ps.search_keyword,
+            ps.product_id,
+            p.name as product_name,
+            SUM(ps.search_count) AS total_search
+        FROM product_search ps
+        LEFT JOIN products p ON ps.product_id = p.id
+        GROUP BY ps.search_keyword, ps.product_id, p.name
+        ORDER BY total_search DESC
+        LIMIT 10;
+    `;
+
+    const result = await pool.query(query);
+
+    if (result.rowCount === 0) {
+        return res.status(404).send('No orders found');
+    }
+
+    return res.send(result.rows);
 }

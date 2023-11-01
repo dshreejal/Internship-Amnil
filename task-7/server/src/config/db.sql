@@ -40,6 +40,30 @@ CREATE TABLE products (
     updated_at TIMESTAMP  DEFAULT  CURRENT_TIMESTAMP
 );
 
+-- PRODUCT SEARCH TABLE --
+CREATE TABLE product_search (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER REFERENCES products(id) UNIQUE NOT NULL,
+    search_keyword VARCHAR(255),
+    search_count INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create a trigger to automatically update the updated_at column
+CREATE OR REPLACE FUNCTION update_product_search_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER product_search_updated_at_trigger
+BEFORE UPDATE ON product_search
+FOR EACH ROW
+EXECUTE FUNCTION update_product_search_updated_at();
+
 -- Create a trigger to automatically update the updated_at column
 CREATE OR REPLACE FUNCTION update_product_updated_at()
 RETURNS TRIGGER AS $$
