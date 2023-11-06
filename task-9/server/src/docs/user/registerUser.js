@@ -17,24 +17,28 @@ module.exports = {
 
         responses: {
             201: {
-                description: "User registered successfully",
+                description: "User created successfully",
                 content: {
                     'application/json': {
                         example: {
-                            "newUser": {
-                                "name": "Gagan",
-                                "username": "gagan",
-                                "address": "Ktm",
-                                "orders": [],
-                                "image": "http://localhost:8000/images/1697625338105-user.jpg",
-                                "_id": "652fb4faa51fd32d3b85c7b1",
-                                "createdAt": "2023-10-18T10:35:38.179Z",
-                                "updatedAt": "2023-10-18T10:35:38.179Z",
-                                "__v": 0
+                            "success": true,
+                            "data": {
+                                "user": {
+                                    "id": "7cc60f57-4d54-45a4-9763-a4cb3dd433bc",
+                                    "name": "Gagan",
+                                    "username": "gagan",
+                                    "email": "email@email.com",
+                                    "password": "$2b$10$lVXwPdjpvUifbGZPgz7yROfh5aykpRcQy0E9m0CHsJbotg2qv8RVu",
+                                    "address": "Ktm",
+                                    "created_at": "2023-11-06T14:52:18.249Z",
+                                    "updated_at": "2023-11-06T14:52:18.249Z",
+                                    "image": ""
+                                },
+                                "authToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiN2NjNjBmNTctNGQ1NC00NWE0LTk3NjMtYTRjYjNkZDQzM2JjIiwidXNlcm5hbWUiOiJnYWdhbiIsImVtYWlsIjoiZW1haWxAZW1haWwuY29tIn0sImlhdCI6MTY5OTI4MjMzOCwiZXhwIjoxNjk5MzY4NzM4fQ.HXNO7lNoCmkT3Lhww32pP-3HtTWt0iCkqc5lUnhUskw"
                             },
-                            "authToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUyZmI0ZmFhNTFmZDMyZDNiODVjN2IxIiwidXNlcm5hbWUiOiJnYWdhbiJ9LCJpYXQiOjE2OTc2MjUzMzgsImV4cCI6MTY5NzcxMTczOH0.LYTbrNHwwavw0wRRWx1Pd3Zt6-yRcRSwuY1lS92beX4"
+                            "message": "User Created Successfully",
+                            "error": null
                         }
-
                     }
                 }
             }

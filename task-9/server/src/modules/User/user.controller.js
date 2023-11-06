@@ -19,7 +19,7 @@ exports.getUsers = async (req, res, next) => {
             user.image = getImageUrl(req, user.image);
             delete user.password;
         }
-        res.status(200).send(users);
+
         // apiResponse(res, statusCode, success, data, message, error)   
         return apiResponse(res, HttpStatus.OK, true, users, 'Users Fetched Successfully', null);
     } catch (error) {
@@ -47,15 +47,8 @@ exports.getOneUser = async (req, res, next) => {
     }
 }
 
-exports.addUser = async (req, res) => {
+exports.addUser = async (req, res, next) => {
     try {
-        const file = req.file.filename;
-
-        if (!file) {
-            // apiResponse(res, statusCode, success, data, message, error)   
-            return apiResponse(res, HttpStatus.BAD_REQUEST, false, null, 'Please upload an image', null);
-        }
-
         const usernameCheck = await pool.query('SELECT * FROM users WHERE username=$1', [req.body.username]);
         if (usernameCheck.rowCount !== 0) {
             // apiResponse(res, statusCode, success, data, message, error)   
@@ -71,10 +64,9 @@ exports.addUser = async (req, res) => {
             email: req.body.email,
             password: securePassword,
             address: req.body.address,
-            image: file
         }
 
-        const newUser = await pool.query('INSERT INTO users (name, username, email, password, address, image) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [user.name, user.username, user.email, user.password, user.address, user.image]);
+        const newUser = await pool.query('INSERT INTO users (name, username, email, password, address) VALUES ($1, $2, $3, $4, $5) RETURNING *', [user.name, user.username, user.email, user.password, user.address]);
 
         const payload = {
             user: {
@@ -96,7 +88,7 @@ exports.addUser = async (req, res) => {
     }
 }
 
-exports.loginUser = async (req, res) => {
+exports.loginUser = async (req, res, next) => {
     try {
         const { username, password } = req.body;
 
@@ -133,7 +125,7 @@ exports.loginUser = async (req, res) => {
 
 }
 
-exports.updateUser = async (req, res) => {
+exports.updateUser = async (req, res, next) => {
     try {
         const user = await pool.query('SELECT * FROM users WHERE id=$1', [req.params.id]);
 
@@ -142,20 +134,15 @@ exports.updateUser = async (req, res) => {
             return apiResponse(res, HttpStatus.NOT_FOUND, false, null, 'User Not Found', null)
         }
 
-        let file;
-        if (req.file) {
-            file = req.file.filename;
-        }
 
         const updateUser = {
             ...user.rows[0],
             name: req.body.name || user.rows[0].name,
             address: req.body.address || user.rows[0].address,
-            image: file || user.rows[0].image
         }
 
 
-        const result = await pool.query('UPDATE users SET name=$1, address=$2, image=$3 WHERE id=$4 RETURNING *', [updateUser.name, updateUser.address, updateUser.image, req.params.id]);
+        const result = await pool.query('UPDATE users SET name=$1, address=$2 WHERE id=$4 RETURNING *', [updateUser.name, updateUser.address, req.params.id]);
 
         const updatedUser = result.rows[0];
         updatedUser.image = getImageUrl(req, updatedUser.image);
@@ -168,7 +155,7 @@ exports.updateUser = async (req, res) => {
     }
 }
 
-exports.deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res, next) => {
     try {
         const user = await pool.query('SELECT * FROM users WHERE id=$1', [req.params.id]);
         if (user.rowCount === 0) {
