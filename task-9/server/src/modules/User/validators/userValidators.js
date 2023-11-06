@@ -27,4 +27,11 @@ const idValidationSchema = yup.object({
     })
 });
 
-module.exports = { newUserSchema, updateUserSchema, idValidationSchema };
+const getUsersSchema = yup.object({
+    query: yup.object({
+        pageNumber: yup.number().integer().typeError('pageNumber must be a number').test('is-number', 'pageNumber must be a number', (value) => !isNaN(value)).min(1, "pageNumber must be greater than or equals 1").default(1),
+        pageSize: yup.number().integer().typeError('pageSize must be a number').test('is-number', 'pageSize must be a number', (value) => !isNaN(value)).min(1, "pageSize must be greater than or equals 1").default(10),
+    })
+})
+
+module.exports = { newUserSchema, updateUserSchema, idValidationSchema, getUsersSchema };

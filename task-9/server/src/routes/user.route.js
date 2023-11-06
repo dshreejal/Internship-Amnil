@@ -9,7 +9,7 @@ const JwtAuthenticationMiddleware = require("../middlewares/JwtAuthentication.mi
 
 const yupValidationMiddleware = require("../middlewares/yupValidationMiddleware");
 
-const { newUserSchema, updateUserSchema, idValidationSchema } = require("../modules/User/validators/userValidators");
+const { newUserSchema, updateUserSchema, idValidationSchema, getUsersSchema } = require("../modules/User/validators/userValidators");
 
 
 //login and signup -Public routes
@@ -25,7 +25,7 @@ router.use(JwtAuthenticationMiddleware)
 
 //Protected Routes
 router.route('/')
-    .get(getUsers)
+    .get(yupValidationMiddleware(getUsersSchema), getUsers)
 
 router.route('/:id')
     .get(yupValidationMiddleware(idValidationSchema), getOneUser)

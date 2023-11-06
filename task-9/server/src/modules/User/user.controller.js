@@ -9,19 +9,41 @@ const apiResponse = require('../../helpers/apiResponse');
 
 exports.getUsers = async (req, res, next) => {
     try {
-        const result = await pool.query('SELECT * FROM users');
+        const pageNumber = parseInt(req.query.pageNumber) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 10;
+        const offset = (pageNumber - 1) * pageSize;
+
+        const result = await pool.query('SELECT * FROM users ORDER BY id OFFSET $1 ROWS FETCH NEXT $2 ROWS ONLY', [offset, pageSize]);
+
         if (result.rowCount === 0) {
             // apiResponse(res, statusCode, success, data, message, error)   
-            return apiResponse(res, HttpStatus.NOT_FOUND, false, null, 'No users found', null)
-        }
-        users = result.rows;
-        for (const user of users) {
-            user.image = getImageUrl(req, user.image);
-            delete user.password;
+            return apiResponse(res, HttpStatus.NOT_FOUND, false, null, 'No Users Found', null)
         }
 
-        // apiResponse(res, statusCode, success, data, message, error)   
-        return apiResponse(res, HttpStatus.OK, true, users, 'Users Fetched Successfully', null);
+        const users = result.rows;
+
+        const totalUsers = await pool.query('SELECT COUNT(*) FROM users');
+        const totalCount = parseInt(totalUsers.rows[0].count);
+
+        const nextPage = pageNumber * pageSize < totalCount ? pageNumber + 1 : null;
+        const previousPage = pageNumber > 1 ? pageNumber - 1 : null;
+
+        users.forEach(user => {
+            user.image = getImageUrl(req, user.image);
+            delete user.password;
+        });
+
+        const response = {
+            users,
+            totalCount,
+            currentPage: pageNumber,
+            nextPage,
+            previousPage,
+        }
+
+        // apiResponse(res, statusCode, success, data, message, error)
+        return apiResponse(res, HttpStatus.OK, true, response, 'Users Fetched Successfully', null);
+
     } catch (error) {
         logger.error(error.message);
         next(error);
