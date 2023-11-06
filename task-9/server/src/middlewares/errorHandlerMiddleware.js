@@ -12,7 +12,7 @@ const errorHandler = (error, req, res, next) => {
         * @param {String} message - An optional message to send in the response.
         * @param {Object} error - An optional error object to send in the response.
  */
-    logger.error(`Request Terminated : ${req.method} ${req.originalUrl} | Req Body: ${JSON.stringify(req.body)} | Query Params:  ${JSON.stringify(req.query)} | Error Code: ${error.status || HttpStatus.INTERNAL_SERVER_ERROR} | Error: ${error.message} |`);
+    logger.error(`Request Terminated : ${req.method} ${req.originalUrl} | Req Body: ${JSON.stringify(req.body)} | Query Params:  ${JSON.stringify(req.query)} | Error Code: ${error.status || HttpStatus.INTERNAL_SERVER_ERROR} | Error Message: ${error.message} |`);
     return sendResponse(res, error.status || HttpStatus.INTERNAL_SERVER_ERROR, false, null, "Some Error Occured", error.message);
 };
 

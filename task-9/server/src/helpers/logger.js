@@ -10,6 +10,15 @@ const logFormat = winston.format.combine(
 
 const loggerTransports = [];
 
+const consoleTransport = new winston.transports.Console({
+    format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+    ),
+    level: "debug",
+});
+loggerTransports.push(consoleTransport);
+
 if (process.env.NODE_ENV === "production") {
     const rotateTransport = new winston.transports.DailyRotateFile({
         dirname: "logs",
@@ -22,24 +31,6 @@ if (process.env.NODE_ENV === "production") {
         level: "info",
     });
     loggerTransports.push(rotateTransport);
-
-    const consoleTransport = new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.simple()
-        ),
-        level: "debug",
-    });
-    loggerTransports.push(consoleTransport);
-} else {
-    const consoleTransport = new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.simple()
-        ),
-        level: "debug",
-    });
-    loggerTransports.push(consoleTransport);
 }
 
 const logger = winston.createLogger({
