@@ -1,5 +1,4 @@
 const yup = require('yup');
-const { v4: uuidv4 } = require('uuid');
 
 
 const newUserSchema = yup.object({
@@ -13,11 +12,19 @@ const newUserSchema = yup.object({
 })
 
 const updateUserSchema = yup.object({
+    params: yup.object({
+        id: yup.string().uuid('Invalid Id').required('Id is required'),
+    }),
     body: yup.object({
         name: yup.string().optional('Name is required'),
         address: yup.string().optional('Address is required'),
     }),
 });
 
+const idValidationSchema = yup.object({
+    params: yup.object({
+        id: yup.string().uuid('Invalid Id').required('Id is required'),
+    })
+});
 
-module.exports = { newUserSchema, updateUserSchema };
+module.exports = { newUserSchema, updateUserSchema, idValidationSchema };

@@ -9,7 +9,7 @@ const JwtAuthenticationMiddleware = require("../middlewares/JwtAuthentication.mi
 
 const yupValidationMiddleware = require("../middlewares/yupValidationMiddleware");
 
-const { newUserSchema, updateUserSchema } = require("../modules/User/validators/userValidators");
+const { newUserSchema, updateUserSchema, idValidationSchema } = require("../modules/User/validators/userValidators");
 
 
 //login and signup -Public routes
@@ -28,8 +28,8 @@ router.route('/')
     .get(getUsers)
 
 router.route('/:id')
-    .get(getOneUser)
+    .get(yupValidationMiddleware(idValidationSchema), getOneUser)
     .put(imageUpload.single('image'), yupValidationMiddleware(updateUserSchema), updateUser)
-    .delete(deleteUser)
+    .delete(yupValidationMiddleware(idValidationSchema), deleteUser)
 
 module.exports = router;
