@@ -40,6 +40,9 @@ CREATE TABLE products (
     updated_at TIMESTAMP  DEFAULT  CURRENT_TIMESTAMP
 );
 
+-- PRODUCT SEARCH INDEX --
+CREATE INDEX product_name_search_idx ON products USING gin(to_tsvector('english', name));
+
 -- PRODUCT SEARCH TABLE --
 CREATE TABLE product_search (
     id SERIAL PRIMARY KEY,

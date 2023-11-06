@@ -62,6 +62,62 @@ exports.searchProducts = async (req, res) => {
     res.status(200).send(products);
 }
 
+// exports.searchProducts = async (req, res) => {
+//     const { name, sort } = req.query;
+
+//     let queryParams = [];
+
+//     let searchConditions = [];
+//     let filterConditions = [];
+
+//     if (name) {
+//         searchConditions.push("to_tsvector('english', name) @@ to_tsquery($1)");
+//         queryParams.push(name);
+//     }
+
+//     if (searchConditions.length > 0) {
+//         filterConditions.push(`(${searchConditions.join(' OR ')})`);
+//     }
+
+//     let sortQuery = "";
+//     if (sort) {
+//         if (sort === "price") {
+//             sortQuery = "ORDER BY price ASC";
+//         } else if (sort === "-price") {
+//             sortQuery = "ORDER BY price DESC";
+//         }
+//     } else {
+//         sortQuery = "ORDER BY id ASC";
+//     }
+
+//     const query = `
+//         SELECT * FROM products
+//         ${filterConditions.length > 0 ? 'WHERE ' + filterConditions.join(' AND ') : ''}
+//         ${sortQuery}
+//     `;
+
+//     const result = await pool.query(query, queryParams);
+
+//     if (result.rowCount === 0) {
+//         return res.status(404).send('No products found');
+//     }
+
+//     const products = result.rows;
+
+//     if (name) {
+//         for (const product of products) {
+//             const searchKeyword = name;
+//             await pool.query('INSERT INTO product_search (product_id, search_count, search_keyword) VALUES ($1, 1, $2) ON CONFLICT (product_id) DO UPDATE SET search_count = product_search.search_count + 1, search_keyword = $2', [product.id, searchKeyword]);
+//         }
+//     }
+
+//     products.forEach((product) => {
+//         product.image = getImageUrl(req, product.image);
+//     });
+
+//     res.status(200).send(products);
+// }
+
 exports.getOneProduct = async (req, res) => {
     const product = await pool.query('SELECT * FROM products WHERE id=$1', [req.params.id]);
     if (product.rowCount === 0) {
@@ -193,7 +249,7 @@ exports.getTopSearchProducts = async (req, res) => {
             SUM(ps.search_count) AS total_search
         FROM product_search ps
         LEFT JOIN products p ON ps.product_id = p.id
-        WHERE DATE(ps.created_at) BETWEEN $1 AND $2
+        WHERE DATE(ps.updated_at) BETWEEN $1 AND $2
         GROUP BY ps.search_keyword, ps.product_id, p.name
         ORDER BY total_search DESC
         LIMIT 10;
