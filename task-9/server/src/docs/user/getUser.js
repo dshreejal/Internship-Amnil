@@ -30,16 +30,19 @@ module.exports = {
 
                         },
                         example: {
-                            "_id": "6523ddc72cbdc35baa0b1ef4",
-                            "name": "John Doe",
-                            "username": "john_doe",
-                            "password": "$2b$10$VdOmtXpafUMYZUdqc98EZuOc9qAadrCTCudZ/iw37xmt6m9Hqeyoy",
-                            "address": "Ktm",
-                            "orders": [],
-                            "image": "http://localhost:8000/images/1696849351073-user.jpg",
-                            "createdAt": "2023-10-09T11:02:31.156Z",
-                            "updatedAt": "2023-10-09T11:02:31.156Z",
-                            "__v": 0
+                            "success": true,
+                            "data": {
+                                "id": "e54e039f-b7e1-4a9b-8a01-c8764fe305f6",
+                                "name": "John Doe",
+                                "username": "john_doe",
+                                "email": "email@email.com",
+                                "address": "Usa",
+                                "created_at": "2023-11-06T14:59:38.474Z",
+                                "updated_at": "2023-11-06T14:59:38.474Z",
+                                "image": ""
+                            },
+                            "message": "User Fetched Successfully",
+                            "error": null
                         }
                     }
                 }
