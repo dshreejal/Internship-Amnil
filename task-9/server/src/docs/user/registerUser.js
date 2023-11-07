@@ -7,7 +7,7 @@ module.exports = {
 
         requestBody: {
             content: {
-                'multipart/form-data': {
+                'application/json': {
                     schema: {
                         $ref: '#/components/schemas/RegisterUser'
                     }
@@ -20,6 +20,9 @@ module.exports = {
                 description: "User created successfully",
                 content: {
                     'application/json': {
+                        schema: {
+                            $ref: '#/components/schemas/ApiResponse'
+                        },
                         example: {
                             "success": true,
                             "data": {

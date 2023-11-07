@@ -6,10 +6,17 @@ module.exports = {
         operationId: 'getUsers',
         parameters: [
             {
-                name: 'name',
+                name: 'pageSize',
                 in: 'query',
-                description: 'name of user to search',
+                description: 'Number of users to fetch',
+                default: 10
             },
+            {
+                name: 'pageNumber',
+                in: 'query',
+                description: 'Page number',
+                default: 1
+            }
         ],
         security: [
             {
@@ -17,16 +24,13 @@ module.exports = {
             }
         ],
 
-        requestBody: {
-        },
-
         responses: {
             200: {
                 description: "User details obtained successfully",
                 content: {
                     'application/json': {
                         schema: {
-
+                            $ref: '#/components/schemas/ApiResponse'
                         },
                         example: {
                             "success": true,
@@ -57,7 +61,6 @@ module.exports = {
                         }
                     }
                 },
-
             }
         }
     }

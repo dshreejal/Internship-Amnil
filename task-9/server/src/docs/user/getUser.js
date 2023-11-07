@@ -18,8 +18,6 @@ module.exports = {
             }
         ],
 
-        requestBody: {
-        },
 
         responses: {
             200: {
@@ -27,7 +25,7 @@ module.exports = {
                 content: {
                     'application/json': {
                         schema: {
-
+                            $ref: '#/components/schemas/ApiResponse'
                         },
                         example: {
                             "success": true,
@@ -51,6 +49,15 @@ module.exports = {
                 description: "User not found",
                 content: {
                     'application/json': {
+                        schema: {
+                            $ref: '#/components/schemas/ErrorResponse'
+                        },
+                        example: {
+                            "success": false,
+                            "data": null,
+                            "message": "User Not Found",
+                            "error": null
+                        }
                     },
                 }
             }

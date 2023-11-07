@@ -10,6 +10,42 @@ module.exports = {
             }
         },
         schemas: {
+            ApiResponse: {
+                type: "object",
+                properties: {
+                    success: {
+                        type: "boolean"
+                    },
+                    data: {
+                        type: "object"
+                    },
+                    message: {
+                        type: "string"
+                    },
+                    error: {
+                        type: "object"
+                    }
+                }
+            },
+            ErrorResponse: {
+                type: "object",
+                properties: {
+                    success: {
+                        type: "boolean",
+                        example: false
+                    },
+                    data: {
+                        type: "object",
+                        example: null
+                    },
+                    message: {
+                        type: "string"
+                    },
+                    error: {
+                        type: "object"
+                    }
+                }
+            },
             ...userComponent,
         }
     }

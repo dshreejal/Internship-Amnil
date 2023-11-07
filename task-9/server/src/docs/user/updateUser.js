@@ -11,9 +11,19 @@ module.exports = {
             }
         ],
 
+        parameters: [
+            {
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'User id',
+                type: 'string'
+            }
+        ],
+
         requestBody: {
             content: {
-                'multipart/form-data': {
+                'application/json': {
                     schema: {
                         $ref: '#/components/schemas/UpdateUser'
                     }
@@ -26,16 +36,23 @@ module.exports = {
                 description: "User updated successfully",
                 content: {
                     'application/json': {
+                        schema: {
+                            $ref: '#/components/schemas/ApiResponse'
+                        },
                         example: {
-                            "name": "Gagan",
-                            "username": "gagan",
-                            "address": "Ktm",
-                            "orders": [],
-                            "image": "http://localhost:8000/images/1697625338105-user.jpg",
-                            "_id": "652fb4faa51fd32d3b85c7b1",
-                            "createdAt": "2023-10-18T10:35:38.179Z",
-                            "updatedAt": "2023-10-18T10:35:38.179Z",
-                            "__v": 0
+                            "success": true,
+                            "data": {
+                                "id": "410666cb-f746-4274-9300-4e57e328bad4",
+                                "name": "updated name",
+                                "username": "test",
+                                "email": "email@email.com",
+                                "password": "$2b$10$kertcifskUnI.WpxZT/z3eILm17Fh70RNGmNFK8MBWK9oksFa/FZC",
+                                "address": "updated address",
+                                "created_at": "2023-11-07T04:46:22.687Z",
+                                "updated_at": "2023-11-07T04:48:26.048Z"
+                            },
+                            "message": "User Updated Successfully",
+                            "error": null
                         }
                     }
                 }
@@ -44,6 +61,15 @@ module.exports = {
                 description: "User not found",
                 content: {
                     'application/json': {
+                        schema: {
+                            $ref: '#/components/schemas/ErrorResponse'
+                        },
+                        example: {
+                            "success": false,
+                            "data": null,
+                            "message": "User Not Found",
+                            "error": null
+                        }
                     },
                 }
             }

@@ -18,10 +18,12 @@ module.exports = {
                 type: 'string',
                 required: true
             },
-            image: {
-                type: 'string',
-                required: true
-            }
+        },
+        example: {
+            "name": "John Doe",
+            "username": "john_doe",
+            "password": "123456",
+            "address": "USA"
         }
     },
     LoginUser: {
@@ -47,18 +49,13 @@ module.exports = {
             name: {
                 type: 'string',
             },
-            username: {
-                type: 'string',
-            },
-            password: {
-                type: 'string',
-            },
             address: {
                 type: 'string',
             },
-            image: {
-                type: 'string',
-            }
+        },
+        example: {
+            "name": "Updated User",
+            "address": "Updated Address"
         }
     },
 }
