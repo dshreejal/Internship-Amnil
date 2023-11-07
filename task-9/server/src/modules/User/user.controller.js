@@ -96,6 +96,8 @@ exports.addUser = async (req, res, next) => {
 
         const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
 
+        delete newUser.rows[0].password
+
 
         // apiResponse(res, statusCode, success, data, message, error)
         return apiResponse(res, HttpStatus.CREATED, true, { user: newUser.rows[0], authToken }, 'User Created Successfully', null);
