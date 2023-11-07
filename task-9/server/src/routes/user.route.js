@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const imageUpload = require("../helpers/imageUpload");
 
 const { getUsers, addUser, getOneUser, updateUser, deleteUser, loginUser } = require("../modules/User/user.controller");
 
@@ -17,7 +16,7 @@ router.route('/login')
     .post(loginUser)
 
 router.route('/')
-    .post(imageUpload.single('image'), yupValidationMiddleware(newUserSchema), addUser)
+    .post(yupValidationMiddleware(newUserSchema), addUser)
 
 //authentication middleware
 router.use(JwtAuthenticationMiddleware)
@@ -29,7 +28,7 @@ router.route('/')
 
 router.route('/:id')
     .get(yupValidationMiddleware(idValidationSchema), getOneUser)
-    .put(imageUpload.single('image'), yupValidationMiddleware(updateUserSchema), updateUser)
+    .put(yupValidationMiddleware(updateUserSchema), updateUser)
     .delete(yupValidationMiddleware(idValidationSchema), deleteUser)
 
 module.exports = router;

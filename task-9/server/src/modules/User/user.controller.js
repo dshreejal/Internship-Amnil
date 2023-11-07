@@ -1,5 +1,4 @@
 const pool = require('../../config/db');
-const { getImageUrl } = require("../../helpers/getImageUrl");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const logger = require('../../helpers/logger');
@@ -29,7 +28,6 @@ exports.getUsers = async (req, res, next) => {
         const previousPage = pageNumber > 1 ? pageNumber - 1 : null;
 
         users.forEach(user => {
-            user.image = getImageUrl(req, user.image);
             delete user.password;
         });
 
@@ -58,8 +56,6 @@ exports.getOneUser = async (req, res, next) => {
             return apiResponse(res, HttpStatus.NOT_FOUND, false, null, 'User Not Found', null)
         }
         delete user.rows[0].password;
-
-        user.rows[0].image = getImageUrl(req, user.rows[0].image);
 
         // apiResponse(res, statusCode, success, data, message, error)   
         return apiResponse(res, HttpStatus.OK, true, user.rows[0], 'User Fetched Successfully', null);
@@ -100,7 +96,6 @@ exports.addUser = async (req, res, next) => {
 
         const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-        newUser.rows[0].image = getImageUrl(req, newUser.rows[0].image);
 
         // apiResponse(res, statusCode, success, data, message, error)
         return apiResponse(res, HttpStatus.CREATED, true, { user: newUser.rows[0], authToken }, 'User Created Successfully', null);
@@ -167,7 +162,6 @@ exports.updateUser = async (req, res, next) => {
         const result = await pool.query('UPDATE users SET name=$1, address=$2 WHERE id=$3 RETURNING *', [updateUser.name, updateUser.address, req.params.id]);
 
         const updatedUser = result.rows[0];
-        updatedUser.image = getImageUrl(req, updatedUser.image);
 
         //apiResponse(res, statusCode, success, data, message, error);
         return apiResponse(res, HttpStatus.OK, true, updatedUser, 'User Updated Successfully', null);
