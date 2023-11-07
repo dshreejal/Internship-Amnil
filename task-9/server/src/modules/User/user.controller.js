@@ -164,7 +164,7 @@ exports.updateUser = async (req, res, next) => {
         }
 
 
-        const result = await pool.query('UPDATE users SET name=$1, address=$2 WHERE id=$4 RETURNING *', [updateUser.name, updateUser.address, req.params.id]);
+        const result = await pool.query('UPDATE users SET name=$1, address=$2 WHERE id=$3 RETURNING *', [updateUser.name, updateUser.address, req.params.id]);
 
         const updatedUser = result.rows[0];
         updatedUser.image = getImageUrl(req, updatedUser.image);
